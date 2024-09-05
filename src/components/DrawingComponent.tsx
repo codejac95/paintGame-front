@@ -6,7 +6,6 @@ function RastaDrawingComponent() {
     const contextRef = useRef<CanvasRenderingContext2D | null>(null);
     const [currentColor, setCurrentColor] = useState<string>("#000000");
     const stompClient = useWebSocket();
-
     const gridSize = 16;
     const squareSize = 20; 
     const strokeStyle = "#808080";
