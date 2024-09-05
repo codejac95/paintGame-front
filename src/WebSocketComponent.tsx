@@ -1,9 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { Client, StompSubscription } from '@stomp/stompjs';
+import React, { useEffect, useState, createContext, useContext } from 'react';
+import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client/dist/sockjs';
 
+interface WebSocketProviderProps {
+    children: React.ReactNode;
+}
 
-const WebSocketComponent: React.FC  = () => {
+const WebSocketContext = createContext<Client | null>(null);
+export const WebSocketProvider: React.FC<WebSocketProviderProps>  = ({ children }) => {
     const [stompClient, setStompClient] = useState<Client | null>(null);
     const [isConnected, setIsConnected] = useState(false);
     
@@ -40,13 +44,16 @@ const WebSocketComponent: React.FC  = () => {
     }, []);
 
     return (
+        <WebSocketContext.Provider value={stompClient}>
         <div>
             <h2>WebSocket Testing </h2>
             <p>WebSocket is {isConnected ? 'connected' : 'disconnected'}</p>
+            {children}
             
             
         </div>
+        </WebSocketContext.Provider>
       
     )
 };
-export default WebSocketComponent
+export const useWebSocket = () => useContext(WebSocketContext)
