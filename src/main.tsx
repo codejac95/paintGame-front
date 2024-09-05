@@ -13,5 +13,6 @@ createRoot(document.getElementById('root')!).render(
     {/* <DrawingComponent /> */}
     <RastaDrawingComponent />
     </WebSocketProvider>
+
   </StrictMode>,
 )
