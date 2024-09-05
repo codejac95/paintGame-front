@@ -1,7 +1,6 @@
 import {useState } from 'react'
 import LoginForm from './Login/LoginForm'
 import CreatePlayerForm from './CreatePlayer/CreatePlayerForm'
-import './App.css'
 
 function App() {
   
@@ -15,7 +14,6 @@ function App() {
   function handleLogin(): void {
     setLoginStatus(true);
   }
-
 
   return (
     <>
@@ -32,7 +30,6 @@ function App() {
             {loginStatus === false ? <CreatePlayerForm onCreatePlayer={handleLogin} /> : null}
           </div>}
       </div>
-
     </>
   )
 }

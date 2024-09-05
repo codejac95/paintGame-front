@@ -1,6 +1,5 @@
-
 import { useState, useRef, useEffect } from "react";
-import { useWebSocket } from "./WebSocketComponent";
+import { useWebSocket } from "../WebSocketComponent";
 
 function RastaDrawingComponent() {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -191,11 +190,12 @@ function RastaDrawingComponent() {
     return ( 
     <div> 
         <div> 
-            <button style={{ backgroundColor: "black", width: 30, height: 30 }} onClick={() => handleColorSelect("#000000")}/> 
-            <button style={{ backgroundColor: "red", width: 30, height: 30 }} onClick={() => handleColorSelect("#FF0000")}/>
-            <button style={{ backgroundColor: "blue", width: 30, height: 30 }} onClick={() => handleColorSelect("#0000FF")}/> 
-            <button style={{ backgroundColor: "yellow", width: 30, height: 30 }} onClick={() => handleColorSelect("#FFFF00")}/> 
-            <button style={{ backgroundColor: "green", width: 30, height: 30 }} onClick={() => handleColorSelect("#008000")} /> 
+            <br />
+            <button style={{ backgroundColor: "black", width: 30, height: 30, margin:"1px"}} onClick={() => handleColorSelect("#000000")}/>
+            <button style={{ backgroundColor: "red", width: 30, height: 30, margin:"1px"}} onClick={() => handleColorSelect("#FF0000")}/>
+            <button style={{ backgroundColor: "blue", width: 30, height: 30 , margin:"1px"}} onClick={() => handleColorSelect("#0000FF")}/> 
+            <button style={{ backgroundColor: "yellow", width: 30, height: 30, margin:"1px"}} onClick={() => handleColorSelect("#FFFF00")}/> 
+            <button style={{ backgroundColor: "green", width: 30, height: 30, margin:"1px"}} onClick={() => handleColorSelect("#008000")} /> 
         </div> 
         <canvas onClick={fillSquare} onContextMenu={clearSquare} ref={canvasRef}/>
     </div> );

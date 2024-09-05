@@ -3,15 +3,13 @@ import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 
 import { WebSocketProvider} from './WebSocketComponent.tsx'
-import RastaDrawingComponent from './RastaDrawingComponent.tsx'
-import './index.css'
+import RastaDrawingComponent from './components/DrawingComponent.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-     <WebSocketProvider>
-    <App />
-    <RastaDrawingComponent />
+    <WebSocketProvider>
+      <App />
+      <RastaDrawingComponent />
     </WebSocketProvider>
-
   </StrictMode>,
 )

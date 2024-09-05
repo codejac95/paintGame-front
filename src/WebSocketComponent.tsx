@@ -48,9 +48,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps>  = ({ children 
         <div>
             <h2>WebSocket Testing </h2>
             <p>WebSocket is {isConnected ? 'connected' : 'disconnected'}</p>
-            {children}
-            
-            
+            {children}            
         </div>
         </WebSocketContext.Provider>
       
