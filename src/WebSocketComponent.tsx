@@ -11,12 +11,9 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps>  = ({ children 
     const [stompClient, setStompClient] = useState<Client | null>(null);
     const [isConnected, setIsConnected] = useState(false);
     
-
-    useEffect(() => {
-       
+    useEffect(() => { 
         const socket = new SockJS('http://localhost:8080/ws');
-        const client = new Client({
-            
+        const client = new Client({   
             webSocketFactory: () => socket,
             onConnect: () => {
                 console.log('Connected to WebSocket');
@@ -30,8 +27,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps>  = ({ children 
                 console.log('Error connecting to WebSocket', error);
                 setIsConnected(false);
             },
-            reconnectDelay: 5000,
-            
+            reconnectDelay: 5000,         
         });
         client.activate();
         setStompClient(client);
@@ -45,13 +41,11 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps>  = ({ children 
 
     return (
         <WebSocketContext.Provider value={stompClient}>
-        <div>
-            <h2>WebSocket Testing </h2>
-            <p>WebSocket is {isConnected ? 'connected' : 'disconnected'}</p>
-            {children}
-            
-            
-        </div>
+            <div>
+                <h2>WebSocket Testing </h2>
+                <p>WebSocket is {isConnected ? 'connected' : 'disconnected'}</p>
+                {children}            
+            </div>
         </WebSocketContext.Provider>
       
     )
