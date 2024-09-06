@@ -23,20 +23,20 @@ function LoginForm({ onLogin }: LoginFormProps) {
             })
 
         })
-            .then(res => res.json())
+            .then(res => res.text())
             .then(data => {
-                // Nödlösning. Fixa i backend
-                if (data !== "Wrong password" || "Something went wrong") {
+                if (data ==="Wrong username or password") {
+                    alert(data)
+                } else {
                     const loggedInPlayer = data;
                     localStorage.setItem("loggedInPlayer", loggedInPlayer)
                     onLogin(loggedInPlayer);
                     setUsername("");
                     setPassword("");
-                } else {
-                    alert("Wrong username or password")
+                    alert(data)
                 }
             })
-    }
+        }
     return (
         <>
             <form className="loginForm" onSubmit={(e) => handleSubmit(e, username, password)}>

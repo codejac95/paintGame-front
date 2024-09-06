@@ -25,9 +25,9 @@ function App() {
           </div>
           :
           <div className='loggedOutHeader'>
-            <h1 className='loggedOutHeaderText'>Paint Game</h1>
-            {loginStatus === false ? <LoginForm onLogin={handleLogin} /> : null}
+            <h1 className='loggedOutHeaderText'>Paint Game</h1>  
             {loginStatus === false ? <CreatePlayerForm onCreatePlayer={handleLogin} /> : null}
+            {loginStatus === false ? <LoginForm onLogin={handleLogin} /> : null}
           </div>}
       </div>
     </>
