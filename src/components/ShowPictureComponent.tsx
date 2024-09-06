@@ -9,13 +9,12 @@ import SquareImage from "../pictures/Square.png";
 
 function ShowPictureComponent() {
     const images = [BallImage, BearImage, DanceImage, FrogImage, SquareImage];
-    const [currentImage, setCurrentImage] = useState<string | null>(null);
-    const [showStartButton, setShowStartButton] = useState(true);
-    const [countdown, setCountdown] = useState<number | null>(null);
+    const [currentImage, setCurrentImage] = useState<string | null>(null); // Start with no image
     const stompClient = useWebSocket();
-    const imageIndexRef = useRef(0);
+    const imageIndexRef = useRef(0); // Store current image index in a ref
 
     const showNextImage = () => {
+        // Get the next image index, cycling back to 0 after reaching the last image
         imageIndexRef.current = (imageIndexRef.current + 1) % images.length;
         const selectedImage = images[imageIndexRef.current];
         setCurrentImage(selectedImage);
@@ -27,17 +26,6 @@ function ShowPictureComponent() {
                 body: JSON.stringify({ image: selectedImage }),
             });
         }
-
-        setShowStartButton(false);
-        setCountdown(20);
-
-        // Start the countdown
-        if (stompClient) {
-            stompClient.publish({
-                destination: "/app/startCountdown",
-                body: JSON.stringify({ countdown: 20 }),
-            });
-        }
     };
 
     useEffect(() => {
@@ -45,23 +33,14 @@ function ShowPictureComponent() {
             const onConnect = () => {
                 console.log("Connected to WebSocket");
 
-                // Subscribe to WebSocket topics
-                const imageSubscription = stompClient.subscribe("/topic/showImage", (message) => {
+                // Subscribe to WebSocket topic
+                const subscription = stompClient.subscribe("/topic/showImage", (message) => {
                     const { image } = JSON.parse(message.body);
                     console.log("Received image from ws: " + image);
                     setCurrentImage(image);
                 });
 
-                const countdownSubscription = stompClient.subscribe("/topic/countdown", (message) => {
-                    const { countdown } = JSON.parse(message.body);
-                    console.log("Received countdown from ws: " + countdown);
-                    setCountdown(countdown);
-                });
-
-                return () => {
-                    imageSubscription.unsubscribe();
-                    countdownSubscription.unsubscribe();
-                };
+                return () => subscription.unsubscribe();
             };
 
             if (stompClient.connected) {
@@ -70,31 +49,23 @@ function ShowPictureComponent() {
                 stompClient.onConnect = onConnect;
             }
         }
-    }, [stompClient]);
-
-    useEffect(() => {
-        if (countdown !== null && countdown > 0) {
-            const timerId = setInterval(() => {
-                setCountdown(prev => (prev ? prev - 1 : null));
-            }, 1000);
-
-            return () => clearInterval(timerId);
-        } else if (countdown === 0) {
-            setShowStartButton(true);
-            setCurrentImage(null);
-        }
-    }, [countdown]);
+    }, [stompClient]); // Depend on stompClient to update the image when the component renders
 
     return (
         <div>
-            {showStartButton && <button onClick={showNextImage}>Start</button>}
-            {currentImage && <img src={currentImage} alt="Sequential Image" />}
-            {countdown !== null && countdown > 0 && <p>Time remaining: {countdown} seconds</p>}
+            <button onClick={showNextImage}>Start</button>
+            {currentImage ? (
+                <img src={currentImage} alt="Sequential Image" />
+            ) : (
+                <p>No image available</p>
+            )}
         </div>
     );
 }
 
 export default ShowPictureComponent;
+
+
 
 
 
