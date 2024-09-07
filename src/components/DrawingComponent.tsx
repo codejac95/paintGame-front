@@ -1,10 +1,12 @@
 import { useState, useRef, useEffect } from "react";
-import { useWebSocket } from "../WebSocketComponent";
+import { useWebSocket } from "./WebSocketComponent";
+import ShowPictureComponent from "./ShowPictureComponent";
 
 function RastaDrawingComponent() {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const contextRef = useRef<CanvasRenderingContext2D | null>(null);
     const [currentColor, setCurrentColor] = useState<string>("#000000");
+    const [showImage, setShowImage] = useState(false);
     const stompClient = useWebSocket();
     const gridSize = 16;
     const squareSize = 20; 
@@ -87,7 +89,19 @@ function RastaDrawingComponent() {
                         }
                     }
                 );
-                return () => subscription.unsubscribe();
+                //for testing
+                const imageSubscription = stompClient.subscribe(
+                    "/topic/showImage", // Listening for image message
+                    (message) => {
+                        const imageMessage = JSON.parse(message.body).image; 
+                        console.log(imageMessage);  // Log the message to the console
+                        setShowImage(true); // Show image component when image message is received
+                    }
+                );
+                return () => {subscription.unsubscribe();
+                            imageSubscription.unsubscribe();
+                }
+
             };
 
             if (stompClient.connected) {
@@ -183,12 +197,24 @@ function RastaDrawingComponent() {
         }
     };
 
+    const handlePlayClick = () => {
+        setShowImage(true);
+        if(stompClient){
+            stompClient.publish({
+                destination: "/app/showImage",
+                body:JSON.stringify({image:"Random Image Comes Here!"})
+                
+            });
+        }
+    };
     const handleColorSelect = (color:string) => { 
         setCurrentColor(color);
     }
     return ( 
     <div> 
         <div> 
+        <button onClick={handlePlayClick}>Play</button>
+        {showImage && <ShowPictureComponent />}
             <br />
             <button style={{ backgroundColor: "black", width: 30, height: 30, margin:"1px"}} onClick={() => handleColorSelect("#000000")}/>
             <button style={{ backgroundColor: "red", width: 30, height: 30, margin:"1px"}} onClick={() => handleColorSelect("#FF0000")}/>
