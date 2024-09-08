@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useWebSocket } from "./WebSocketComponent";
 
 import BallImage from "../pictures/Ball.png";
@@ -9,35 +9,82 @@ import SquareImage from "../pictures/Square.png";
 
 function ShowPictureComponent() {
     const images = [BallImage, BearImage, DanceImage, FrogImage, SquareImage];
-    const [currentImage, setCurrentImage] = useState<string | null>(null); // Start with no image
+    const [currentImage, setCurrentImage] = useState<string | null>(null);
+    const [countdown, setCountdown] = useState<number>(10);
+    const [isRunning, setIsRunning] = useState<boolean>(false);
     const stompClient = useWebSocket();
-    const imageIndexRef = useRef(0); // Store current image index in a ref
+    const imageIndexRef = useRef(0);
+    const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-    const showNextImage = () => {
-        // Get the next image index, cycling back to 0 after reaching the last image
+    const startLocalCountdown = useCallback(() => {
+        setIsRunning(true);
+        setCountdown(10);
+
+        if (countdownIntervalRef.current) {
+            clearInterval(countdownIntervalRef.current);
+        }
+
+        countdownIntervalRef.current = setInterval(() => {
+            setCountdown((prevCountdown) => {
+                if (prevCountdown > 0) {
+                    return prevCountdown - 1;
+                } else {
+                    clearInterval(countdownIntervalRef.current as NodeJS.Timeout);
+                    setIsRunning(false);
+                    setCurrentImage(null);
+
+                    // Publish countdown end message
+                    if (stompClient && stompClient.connected) {
+                        stompClient.publish({
+                            destination: "/app/showImage",
+                            body: JSON.stringify({ action: 'countdownEnded' }),
+                        });
+                    }
+                    
+                    return 10;
+                }
+            });
+        }, 1000);
+    }, [stompClient]);
+
+    const showNextImage = useCallback(() => {
         imageIndexRef.current = (imageIndexRef.current + 1) % images.length;
         const selectedImage = images[imageIndexRef.current];
         setCurrentImage(selectedImage);
 
-        if (stompClient) {
-            console.log("Publishing image: " + selectedImage);
+        if (stompClient && stompClient.connected) {
             stompClient.publish({
-                destination: "/app/showImage",
-                body: JSON.stringify({ image: selectedImage }),
+                destination: "/app/broadcastImage",
+                body: JSON.stringify({
+                    image: selectedImage,
+                    action: 'startCountdown',
+                }),
             });
         }
-    };
+
+        startLocalCountdown();
+    }, [stompClient, images, startLocalCountdown]);
 
     useEffect(() => {
         if (stompClient) {
             const onConnect = () => {
-                console.log("Connected to WebSocket");
-
-                // Subscribe to WebSocket topic
                 const subscription = stompClient.subscribe("/topic/showImage", (message) => {
-                    const { image } = JSON.parse(message.body);
-                    console.log("Received image from ws: " + image);
-                    setCurrentImage(image);
+                    const { image, action } = JSON.parse(message.body);
+
+                    if (image) {
+                        setCurrentImage(image);
+                    }
+
+                    if (action === 'startCountdown') {
+                        startLocalCountdown();
+                    }
+
+                    if (action === 'countdownEnded') {
+                        // Stop countdown and hide image when countdown ends
+                        clearInterval(countdownIntervalRef.current as NodeJS.Timeout);
+                        setIsRunning(false);
+                        setCurrentImage(null);
+                    }
                 });
 
                 return () => subscription.unsubscribe();
@@ -49,28 +96,28 @@ function ShowPictureComponent() {
                 stompClient.onConnect = onConnect;
             }
         }
-    }, [stompClient]); // Depend on stompClient to update the image when the component renders
+
+        return () => {
+            if (stompClient) {
+                stompClient.onConnect = () => {};
+            }
+        };
+    }, [stompClient, startLocalCountdown]);
 
     return (
         <div>
-            <button onClick={showNextImage}>Start</button>
-            {currentImage ? (
-                <img src={currentImage} alt="Sequential Image" />
-            ) : (
-                <p>No image available</p>
+            {!isRunning && (
+                <button onClick={showNextImage}>Start</button>
+            )}
+
+            {currentImage && (
+                <div>
+                    <img src={currentImage} alt="Current" />
+                    {isRunning && <p>Countdown: {countdown}</p>}
+                </div>
             )}
         </div>
     );
 }
 
 export default ShowPictureComponent;
-
-
-
-
-
-
-
-
-
-
