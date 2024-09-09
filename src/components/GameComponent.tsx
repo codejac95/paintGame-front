@@ -2,17 +2,19 @@ import { useEffect, useState } from "react";
 import ShowPictureComponent from "./ShowPictureComponent";
 import DrawingComponent from "./DrawingComponent";
 import { useWebSocket } from "./WebSocketComponent";
+import ScoreCalculator from "../types/ScoreCalculator";
 
 
 interface GameCompProp{
     loginStatus: boolean;
+    playerId: string;
 }
 
 function GameComponent({}: GameCompProp) {
-    const [activeComponent, setActiveComponent] = useState<'drawing' | 'image'>('drawing');
+    const [activeComponent, setActiveComponent] = useState<'drawing' | 'image' | 'score'>('drawing');
     const stompClient = useWebSocket();
 
-    const handleButtonClick = (component: 'drawing' | 'image') => {
+    const handleButtonClick = (component: 'drawing' | 'image'| 'score') => {
         setActiveComponent(component);
 
         if (component === 'image' && stompClient && stompClient.connected) {
@@ -60,9 +62,12 @@ function GameComponent({}: GameCompProp) {
                     <div>
                         <button onClick={() => handleButtonClick('drawing')}>Players</button>
                         <button onClick={() => handleButtonClick('image')}>Image</button>
+                        <button onClick={() => handleButtonClick('score')}>Update Score</button> {/* Added button for ScoreCalculator */}
                     </div>
                     {activeComponent === 'drawing' && <DrawingComponent />}
                     {activeComponent === 'image' && <ShowPictureComponent />}
+                    {activeComponent === 'score' && <ScoreCalculator playerId="yourPlayerId" />} {/* Adjust the playerId prop */}
+
                 </>
            
         </div>
