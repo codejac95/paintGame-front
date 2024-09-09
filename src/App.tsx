@@ -1,10 +1,12 @@
 import {useState } from 'react'
 import LoginForm from './Login/LoginForm'
 import CreatePlayerForm from './CreatePlayer/CreatePlayerForm'
+import GameComponent from './components/GameComponent';
 
 function App() {
   
   const [loginStatus, setLoginStatus] = useState<boolean>(false);
+  
 
   function handleLogOut(): void {
     localStorage.clear()
@@ -30,8 +32,12 @@ function App() {
             {loginStatus === false ? <LoginForm onLogin={handleLogin} /> : null}
           </div>}
       </div>
+      <div>
+         {/* Display LoginAndPassComponent until the user logs in */}
+         {loginStatus === true ? <GameComponent loginStatus={loginStatus} /> : null}
+         </div>
     </>
-  )
+    )
 }
 
 export default App

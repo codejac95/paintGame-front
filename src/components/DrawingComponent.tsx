@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useWebSocket } from "./WebSocketComponent";
 
 
-function RastaDrawingComponent() {
+function DrawingComponent() {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const contextRef = useRef<CanvasRenderingContext2D | null>(null);
     const [currentColor, setCurrentColor] = useState<string>("#000000");
@@ -208,4 +208,4 @@ function RastaDrawingComponent() {
     </div> );
     }
 
-export default RastaDrawingComponent;
+export default DrawingComponent;

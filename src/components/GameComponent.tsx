@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
 import ShowPictureComponent from "./ShowPictureComponent";
-import RastaDrawingComponent from "./DrawingComponent";
+import DrawingComponent from "./DrawingComponent";
 import { useWebSocket } from "./WebSocketComponent";
 
-function GameComponent() {
+
+interface GameCompProp{
+    loginStatus: boolean;
+}
+
+function GameComponent({}: GameCompProp) {
     const [activeComponent, setActiveComponent] = useState<'drawing' | 'image'>('drawing');
     const stompClient = useWebSocket();
 
@@ -45,15 +50,21 @@ function GameComponent() {
         };
     }, [stompClient]);
 
+    
+
     return (
         <div>
-            <div>
-                <button onClick={() => handleButtonClick('drawing')}>Players</button>
-                <button onClick={() => handleButtonClick('image')}>Image</button>
-            </div>
-            {activeComponent === 'drawing' && <RastaDrawingComponent />}
-            {activeComponent === 'image' && <ShowPictureComponent />}
-             
+           
+                <>
+                    {/* Display buttons and game components after login */}
+                    <div>
+                        <button onClick={() => handleButtonClick('drawing')}>Players</button>
+                        <button onClick={() => handleButtonClick('image')}>Image</button>
+                    </div>
+                    {activeComponent === 'drawing' && <DrawingComponent />}
+                    {activeComponent === 'image' && <ShowPictureComponent />}
+                </>
+           
         </div>
     );
 }
