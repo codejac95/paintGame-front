@@ -3,12 +3,13 @@ import ShowPictureComponent from "./ShowPictureComponent";
 import DrawingComponent from "./DrawingComponent";
 import { useWebSocket } from "./WebSocketComponent";
 
-
 interface GameCompProp{
     loginStatus: boolean;
+    assignedSquare: number | null;
+    playerName: string;
 }
 
-function GameComponent({}: GameCompProp) {
+function GameComponent({loginStatus, assignedSquare}: GameCompProp) {
     const [activeComponent, setActiveComponent] = useState<'drawing' | 'image'>('drawing');
     const stompClient = useWebSocket();
 
@@ -49,25 +50,24 @@ function GameComponent({}: GameCompProp) {
             }
         };
     }, [stompClient]);
-
-    
-
+const playerName = localStorage.getItem("loggedInPlayer")
     return (
         <div>
-           
-                <>
-                    {/* Display buttons and game components after login */}
-                    <div>
-                        <button onClick={() => handleButtonClick('drawing')}>Players</button>
-                        <button onClick={() => handleButtonClick('image')}>Image</button>
-                    </div>
-                    {activeComponent === 'drawing' && <DrawingComponent />}
-                    {activeComponent === 'image' && <ShowPictureComponent />}
-                </>
-           
+          {loginStatus && (
+            <>
+              <div>
+                <button onClick={() => handleButtonClick('drawing')}>Players</button>
+                <button onClick={() => handleButtonClick('image')}>Image</button>
+              </div>
+              {activeComponent === 'drawing' && assignedSquare !== null && (
+                <DrawingComponent assignedSquare={assignedSquare} playerName={playerName} />
+              )}
+              {activeComponent === 'image' && <ShowPictureComponent />}
+            </>
+          )}
         </div>
-    );
-}
+      );
+    }
 
 export default GameComponent;
 
