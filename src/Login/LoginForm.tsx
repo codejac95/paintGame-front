@@ -25,18 +25,20 @@ function LoginForm({ onLogin }: LoginFormProps) {
         })
             .then(res => res.text())
             .then(data => {
-                if (data ==="Wrong username or password") {
-                    alert(data)
+
+                if (data.length === 60) {
+                    alert("Wrong username or password")
                 } else {
                     const loggedInPlayer = data;
-                    localStorage.setItem("loggedInPlayer", loggedInPlayer)
+                    console.log(data);
+                    localStorage.setItem("loggedInPlayer", loggedInPlayer);
                     onLogin(loggedInPlayer);
                     setUsername("");
                     setPassword("");
                     alert(data)
                 }
             })
-        }
+    }
     return (
         <>
             <form className="loginForm" onSubmit={(e) => handleSubmit(e, username, password)}>
