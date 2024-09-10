@@ -5,15 +5,14 @@ import SockJS from 'sockjs-client/dist/sockjs';
 interface WebSocketProviderProps {
     children: React.ReactNode;
 }
-
+const socket = new SockJS("https://plankton-app-dtvpj.ondigitalocean.app/ws")
+     // const socket = new SockJS('http://localhost:8080/ws');
 const WebSocketContext = createContext<Client | null>(null);
 export const WebSocketProvider: React.FC<WebSocketProviderProps>  = ({ children }) => {
     const [stompClient, setStompClient] = useState<Client | null>(null);
     const [isConnected, setIsConnected] = useState(false);
     
     useEffect(() => { 
-        const socket = new SockJS('https://plankton-app-dtvpj.ondigitalocean.app/ws')
-        // const socket = new SockJS('http://localhost:8080/ws');
         const client = new Client({   
             webSocketFactory: () => socket,
             onConnect: () => {
