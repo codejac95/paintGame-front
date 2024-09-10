@@ -16,7 +16,8 @@ function CreatePlayerForm({ onCreatePlayer }: CreatePlayerFormProps) {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Origin": "*"
+                "Origin": "*",
+                "Access-Control-Allow-Origin": "*",
             },
             body: JSON.stringify({
                 username: username,
