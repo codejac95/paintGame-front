@@ -62,11 +62,11 @@ function GameComponent({}: GameCompProp) {
                     <div>
                         <button onClick={() => handleButtonClick('drawing')}>Players</button>
                         <button onClick={() => handleButtonClick('image')}>Image</button>
-                        <button onClick={() => handleButtonClick('score')}>Update Score</button> {/* Added button for ScoreCalculator */}
+                        <button onClick={() => handleButtonClick('score')}>Update Score</button> 
                     </div>
                     {activeComponent === 'drawing' && <DrawingComponent />}
                     {activeComponent === 'image' && <ShowPictureComponent />}
-                    {activeComponent === 'score' && <ScoreCalculator playerId="yourPlayerId" />} {/* Adjust the playerId prop */}
+                    {activeComponent === 'score' && <ScoreCalculator playerId="yourPlayerId" />} 
 
                 </>
            
