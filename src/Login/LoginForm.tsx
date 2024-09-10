@@ -10,7 +10,7 @@ function LoginForm({ onLogin }: LoginFormProps) {
 
     function handleSubmit(e: FormEvent<HTMLFormElement>, username: string, password: string): void {
         e.preventDefault();
-        fetch("https://plankton-app-dtvpj.ondigitalocean.app/login",{
+        fetch("https://plankton-app-dtvpj.ondigitalocean.app/player/login",{
         // fetch("http://localhost:8080/player/login", {
             method: "POST",
             headers: {

@@ -12,7 +12,7 @@ function CreatePlayerForm({ onCreatePlayer }: CreatePlayerFormProps) {
         e.preventDefault();
 
         // fetch("http://localhost:8080/player/create", {
-            fetch("https://plankton-app-dtvpj.ondigitalocean.app/create", {
+            fetch("https://plankton-app-dtvpj.ondigitalocean.app/player/create", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
