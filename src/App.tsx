@@ -40,7 +40,7 @@ function App() {
          </div>
 
          <div>
-        {/* Only show the score form if the user is logged in */}
+      
         {loginStatus && loggedInPlayerId && <ScoreCalculator playerId={loggedInPlayerId} />}
       </div>
     </>
