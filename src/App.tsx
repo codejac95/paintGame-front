@@ -3,6 +3,7 @@ import LoginForm from './Login/LoginForm'
 import CreatePlayerForm from './CreatePlayer/CreatePlayerForm'
 import GameComponent from './components/GameComponent';
 import { useWebSocket } from './components/WebSocketComponent';
+import Highscore from './components/Highscore';
 
 function App() {
   
@@ -11,6 +12,7 @@ function App() {
   const [assignedSquare, setAssignedSquare] = useState<number | null>(null);
   const [occupiedSquares, setOccupiedSquares] = useState<number[]>([]); 
   const stompClient = useWebSocket();
+  const [showHighscores, setShowHighscores] = useState<boolean>(false);
 
   useEffect(() => {
     const loggedIn = localStorage.getItem("loggedInPlayer")
@@ -93,6 +95,11 @@ function App() {
             {!joinedGame && (
               <button onClick={handleJoinGame} className='joinGameBtn'>Join game</button>
             )}
+            <button onClick={() => setShowHighscores(!showHighscores)}>
+        {showHighscores ? 'Hide Highscores' : 'Show Highscores'}
+        {showHighscores && <Highscore />}
+      </button>
+
           </div>
         ) : (
           <div className='loggedOutHeader'>
