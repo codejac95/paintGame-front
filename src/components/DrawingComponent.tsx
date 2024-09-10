@@ -1,28 +1,33 @@
 import { useState, useRef, useEffect } from "react";
 import { useWebSocket } from "./WebSocketComponent";
 
-
-function DrawingComponent() {
+interface DrawingComponentProps {
+    assignedSquare: number | null;
+    playerName : string | null;
+  }
+  
+  function DrawingComponent({ assignedSquare, playerName }: DrawingComponentProps) {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const contextRef = useRef<CanvasRenderingContext2D | null>(null);
     const [currentColor, setCurrentColor] = useState<string>("#000000");
-   
+  
     const stompClient = useWebSocket();
     const gridSize = 16;
-    const squareSize = 20; 
+    const squareSize = 20;
     const strokeStyle = "#808080";
     const lineWidth = 1;
-
+  
     const grids = [
-        { id: 0, offsetX: 50, offsetY: 50 },
-        { id: 1, offsetX: 400, offsetY: 50 },
-        { id: 2, offsetX: 50, offsetY: 400 },
-        { id: 3, offsetX: 400, offsetY: 400 },
+      { id: 0, offsetX: 50, offsetY: 50 },
+      { id: 1, offsetX: 400, offsetY: 50 },
+      { id: 2, offsetX: 50, offsetY: 400 },
+      { id: 3, offsetX: 400, offsetY: 400 },
     ];
 
     const squares = grids.flatMap((grid) =>
         Array.from({ length: gridSize * gridSize }, (_, i) => ({
             id: grid.id * gridSize * gridSize + i,
+            gridId: grid.id,
             x: grid.offsetX + (i % gridSize) * squareSize,
             y: grid.offsetY + Math.floor(i / gridSize) * squareSize,
             width: squareSize,
@@ -102,13 +107,28 @@ function DrawingComponent() {
                 stompClient.onConnect = onConnect;
             }
         }
-
+        if (assignedSquare !== null) {
+            const square = squares.find((sq) => sq.gridId === assignedSquare);
+            if (square && context) {
+              context.fillStyle = "#000"; 
+              context.font = "16px Arial"; 
+              context.textAlign = "center";
+              context.textBaseline = "bottom"; 
+        
+              context.fillText(
+                playerName!,
+                square.x + square.width / 2,
+                square.y - 5
+              );
+            }
+          }
         return () => {
             if (stompClient) {
                 stompClient.onConnect = () => {};
             }
         };
-    }, [stompClient]);
+
+    }, [stompClient, assignedSquare, playerName]);
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -128,68 +148,69 @@ function DrawingComponent() {
     const fillSquare = (event: React.MouseEvent<HTMLCanvasElement>) => {
         const { offsetX, offsetY } = event.nativeEvent;
         const squareId = getSquareId(offsetX, offsetY);
-        if (squareId !== null) {
-            const square = squares.find((sq) => sq.id === squareId);
-            if (square && contextRef.current) {
-                contextRef.current.fillStyle = currentColor;
-                contextRef.current.fillRect(
-                    square.x,
-                    square.y,
-                    square.width,
-                    square.height
-                );
-                contextRef.current.strokeStyle = strokeStyle;
-                contextRef.current.lineWidth = lineWidth;
-                contextRef.current.strokeRect(
-                    square.x,
-                    square.y,
-                    square.width,
-                    square.height
-                );
+        const square = squares.find((sq) => sq.id === squareId);
 
-                if (stompClient) {
-                    stompClient.publish({
-                        destination: "/app/draw",
-                        body: JSON.stringify({ squareId, color: currentColor }),
-                    });
-                }
+        if (square && square.gridId === assignedSquare) {
+          if (square && contextRef.current) {
+            contextRef.current.fillStyle = currentColor;
+            contextRef.current.fillRect(
+              square.x,
+              square.y,
+              square.width,
+              square.height
+            );
+            contextRef.current.strokeStyle = strokeStyle;
+            contextRef.current.lineWidth = lineWidth;
+            contextRef.current.strokeRect(
+              square.x,
+              square.y,
+              square.width,
+              square.height
+            );
+    
+            if (stompClient) {
+              stompClient.publish({
+                destination: "/app/draw",
+                body: JSON.stringify({ squareId, color: currentColor }),
+              });
             }
-        }
-    };
+          }
+        } 
+      };
 
     const clearSquare = (event: React.MouseEvent<HTMLCanvasElement>) => {
-        event.preventDefault(); 
-        const { offsetX, offsetY } = event.nativeEvent;
-        const squareId = getSquareId(offsetX, offsetY);
-        if (squareId !== null) {
-            const square = squares.find((sq) => sq.id === squareId);
-            if (square && contextRef.current) {
-                contextRef.current.clearRect(
-                    square.x,
-                    square.y,
-                    square.width,
-                    square.height
-                );
+    event.preventDefault();
+    const { offsetX, offsetY } = event.nativeEvent;
+    const squareId = getSquareId(offsetX, offsetY);
+    const square = squares.find((sq) => sq.id === squareId);
 
-                contextRef.current.strokeStyle = strokeStyle;
-                contextRef.current.lineWidth = lineWidth;
-                contextRef.current.strokeRect(
-                    square.x,
-                    square.y,
-                    square.width,
-                    square.height
-                );
-                if (stompClient) {
-                    stompClient.publish({
-                        destination: "/app/draw",
-                        body: JSON.stringify({ squareId, color: "#FFFFFF" }),
+    if (square && square.gridId === assignedSquare) {
+      if (square && contextRef.current) {
+        contextRef.current.clearRect(
+          square.x,
+          square.y,
+          square.width,
+          square.height
+        );
+
+        contextRef.current.strokeStyle = strokeStyle;
+        contextRef.current.lineWidth = lineWidth;
+        contextRef.current.strokeRect(
+          square.x,
+          square.y,
+          square.width,
+          square.height
+        );
+        if (stompClient) {
+          stompClient.publish({
+            destination: "/app/draw",
+            body: JSON.stringify({ squareId, color: "#FFFFFF" }),
                     });
                 }
             }
         }
     };
 
-    
     const handleColorSelect = (color:string) => { 
         setCurrentColor(color);
     }
