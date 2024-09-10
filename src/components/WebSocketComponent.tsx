@@ -5,7 +5,7 @@ import SockJS from 'sockjs-client/dist/sockjs';
 interface WebSocketProviderProps {
     children: React.ReactNode;
 }
-const socket = new SockJS("https://plankton-app-dtvpj.ondigitalocean.app/ws")
+const socket = new SockJS("https://plankton-app-dtvpj.ondigitalocean.app/ws");
      // const socket = new SockJS('http://localhost:8080/ws');
 const WebSocketContext = createContext<Client | null>(null);
 export const WebSocketProvider: React.FC<WebSocketProviderProps>  = ({ children }) => {
