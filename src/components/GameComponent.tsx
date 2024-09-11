@@ -13,16 +13,7 @@ function GameComponent({loginStatus, assignedSquare}: GameCompProp) {
     const [activeComponent, setActiveComponent] = useState<'drawing' | 'image'>('drawing');
     const stompClient = useWebSocket();
 
-    const handleButtonClick = (component: 'drawing' | 'image') => {
-        setActiveComponent(component);
-
-        if (component === 'image' && stompClient && stompClient.connected) {
-            stompClient.publish({
-                destination: "/app/showComponent",
-                body: JSON.stringify({ action: 'showImage' }),
-            });
-        }
-    };
+ 
     useEffect(() => {
         if (stompClient) {
             const onConnect = () => {
@@ -50,19 +41,21 @@ function GameComponent({loginStatus, assignedSquare}: GameCompProp) {
             }
         };
     }, [stompClient]);
+
 const playerName = localStorage.getItem("loggedInPlayer")
+
     return (
         <div>
           {loginStatus && (
             <>
+            <ShowPictureComponent />
               <div>
-                <button onClick={() => handleButtonClick('drawing')}>Players</button>
-                <button onClick={() => handleButtonClick('image')}>Image</button>
+                
               </div>
-              {activeComponent === 'drawing' && assignedSquare !== null && (
+              {assignedSquare !== null && (
                 <DrawingComponent assignedSquare={assignedSquare} playerName={playerName} />
               )}
-              {activeComponent === 'image' && <ShowPictureComponent />}
+              
             </>
           )}
         </div>
