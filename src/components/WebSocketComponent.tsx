@@ -13,7 +13,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
     const [isConnected, setIsConnected] = useState(false);
 
     useEffect(() => {
-        const socket = new SockJS('https://plankton-app-dtvpj.ondigitalocean.app/websocket');
+        const socket = new SockJS("https://dolphin-app-eqkxi.ondigitalocean.app/websocket");
         const stompClient = Stomp.over(socket);
 
         stompClient.connect({}, () => {
