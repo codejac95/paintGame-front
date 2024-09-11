@@ -15,6 +15,7 @@ const Highscore: React.FC = () => {
   useEffect(() => {
     const fetchPlayerAverageScores = async () => {
       try {
+        // const response = await fetch(' http://localhost:8080/player/averageScorePerPlayer'); 
         const response = await fetch('https://plankton-app-dtvpj.ondigitalocean.app/player/averageScorePerPlayer'); 
         if (!response.ok) {
           throw new Error('Failed to fetch data');
