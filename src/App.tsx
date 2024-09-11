@@ -1,3 +1,4 @@
+import "./types/global"
 import {useEffect, useState } from 'react'
 import LoginForm from './Login/LoginForm'
 import CreatePlayerForm from './CreatePlayer/CreatePlayerForm'

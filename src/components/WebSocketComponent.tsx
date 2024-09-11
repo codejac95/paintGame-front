@@ -1,6 +1,6 @@
 import React, { useEffect, useState, createContext, useContext } from 'react';
 import { Client } from '@stomp/stompjs';
-import SockJS from 'sockjs-client/dist/sockjs';
+import SockJS from 'sockjs-client';
 
 interface WebSocketProviderProps {
     children: React.ReactNode;
@@ -13,7 +13,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps>  = ({ children 
     
     useEffect(() => { 
         const socket = new SockJS("https://plankton-app-dtvpj.ondigitalocean.app/websocket");
-     // const socket = new SockJS('http://localhost:8080/websocket');
+    //  const socket = new SockJS('http://localhost:8080/websocket');
         const client = new Client({   
 
             webSocketFactory: () => socket,
