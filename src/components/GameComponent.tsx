@@ -10,7 +10,7 @@ interface GameCompProp{
 }
 
 function GameComponent({loginStatus, assignedSquare}: GameCompProp) {
-    const [activeComponent, setActiveComponent] = useState<'drawing' | 'image'>('drawing');
+    const [_, setActiveComponent] = useState<'drawing' | 'image'>('drawing');
     const stompClient = useWebSocket();
 
  
