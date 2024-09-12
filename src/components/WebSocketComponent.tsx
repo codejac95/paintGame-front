@@ -45,7 +45,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps>  = ({ children 
                 stompClient.deactivate(); 
             }
         };
-    }, [stompClient]);
+    }, []);
 
     return (
         <WebSocketContext.Provider value={stompClient}>
