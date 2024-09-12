@@ -31,7 +31,7 @@ function ShowPictureComponent() {
                 } else {
                     clearInterval(countdownIntervalRef.current as NodeJS.Timeout);
                     setIsRunning(false);
-                    setCurrentImage(null);
+                    
 
                     // Publish countdown end message
                     if (stompClient && stompClient.connected) {
@@ -40,8 +40,13 @@ function ShowPictureComponent() {
                             body: JSON.stringify({ action: 'countdownEnded' }),
                         });
                     }
-                    
-                    return 10;
+                  
+                    setTimeout(() => {
+                        
+                        setCountdown(10);
+                    },1500)
+                    setCurrentImage(null);
+                    return 0;
                 }
             });
         }, 1000);
@@ -106,16 +111,17 @@ function ShowPictureComponent() {
 
     return (
         <div>
-            {!isRunning && (
+            {!isRunning && countdown !== 0 && (
                 <button onClick={showNextImage}>Start</button>
             )}
 
-            {currentImage && (
+            {currentImage ? (
                 <div>
                     <img src={currentImage} alt="Current" />
-                    {isRunning && <p>Countdown: {countdown}</p>}
+                    {isRunning && countdown > 0 && <p>Countdown: {countdown}</p>}
+                
                 </div>
-            )}
+            ):(countdown === 0 &&<h1>Paint</h1>)}
         </div>
     );
 }
