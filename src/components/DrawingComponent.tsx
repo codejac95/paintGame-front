@@ -148,6 +148,8 @@ interface DrawingComponentProps {
     const fillSquare = (event: React.MouseEvent<HTMLCanvasElement>) => {
         const { offsetX, offsetY } = event.nativeEvent;
         const squareId = getSquareId(offsetX, offsetY);
+        console.log("Lägger till Square ID: ",squareId,"color: ", currentColor);
+        
         const square = squares.find((sq) => sq.id === squareId);
 
         if (square && square.gridId === assignedSquare) {
@@ -182,6 +184,7 @@ interface DrawingComponentProps {
     event.preventDefault();
     const { offsetX, offsetY } = event.nativeEvent;
     const squareId = getSquareId(offsetX, offsetY);
+    console.log("Tar bort Square ID: ",squareId,"color: ", currentColor);
     const square = squares.find((sq) => sq.id === squareId);
 
     if (square && square.gridId === assignedSquare) {
