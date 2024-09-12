@@ -41,8 +41,18 @@ function GameComponent({loginStatus, assignedSquare}: GameCompProp) {
             }
         };
     }, [stompClient]);
+    const playerName = localStorage.getItem("loggedInPlayer");
+    let username = '';
 
-const playerName = localStorage.getItem("loggedInPlayer")
+    if (playerName) {
+        try {
+            const parsedPlayer = JSON.parse(playerName); 
+            username = parsedPlayer.username || '';   
+        } catch (error) {
+            console.error("Failed to parse playerName from localStorage", error);
+            username = playerName;
+        }
+    }
 
     return (
         <div>
@@ -53,7 +63,7 @@ const playerName = localStorage.getItem("loggedInPlayer")
                 
               </div>
               {assignedSquare !== null && (
-                <DrawingComponent assignedSquare={assignedSquare} playerName={playerName} />
+                <DrawingComponent assignedSquare={assignedSquare} playerName={username} />
               )}
               
             </>

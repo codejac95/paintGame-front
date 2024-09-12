@@ -18,8 +18,6 @@ function LoginForm({ onLogin }: LoginFormProps) {
     function handleSubmit(e: FormEvent<HTMLFormElement>, username: string, password: string): void {
         e.preventDefault();
 
-
-
         // fetch('https://plankton-app-dtvpj.ondigitalocean.app/player/login',{
 
         fetch("http://localhost:8080/player/login", {
@@ -39,7 +37,9 @@ function LoginForm({ onLogin }: LoginFormProps) {
         .then((data: Player) => {
             
             if (!data.id) {
-                alert("Wrong username or password");
+                alert("Failed to login");
+                setUsername("")
+                setPassword("")
             } else {
                 console.log("Player ID:", data.id);
                 console.log("Username:", data.username);

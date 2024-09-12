@@ -49,19 +49,32 @@ function App() {
 
   function handleLogOut(): void {
     if (assignedSquare !== null && stompClient) {
-      stompClient.publish({
+        stompClient.publish({
         destination: '/app/freeSquare',
         body: JSON.stringify(assignedSquare),
       });
     }
-    localStorage.clear()
-    setLoginStatus(false)
-    setJoinedGame(false)
-    setAssignedSquare(null)
-    console.log("ruta tas bort: ", assignedSquare);
-    
-  }
+    const playerData = localStorage.getItem("loggedInPlayer");
+    if (playerData) {
+        const player = JSON.parse(playerData); 
 
+        fetch("http://localhost:8080/player/logout", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(player), 
+        })
+        .then(()=> {
+          console.log("loggar ut: ",player);
+          
+            localStorage.clear();
+            setLoginStatus(false);
+            setJoinedGame(false);
+            setAssignedSquare(null);
+        })
+    }
+}
   function handleLogin(): void {
     setLoginStatus(true);
   }
