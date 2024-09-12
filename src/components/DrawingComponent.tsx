@@ -5,11 +5,17 @@ interface DrawingComponentProps {
     assignedSquare: number | null;
     playerName : string | null;
   }
+  interface SquareState{
+    id:number;
+    gridId:number;
+    color:string;
+  }
   
   function DrawingComponent({ assignedSquare, playerName }: DrawingComponentProps) {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const contextRef = useRef<CanvasRenderingContext2D | null>(null);
     const [currentColor, setCurrentColor] = useState<string>("#000000");
+    const [squareStates, setSquareStates] = useState<SquareState[]>([]);
   
     const stompClient = useWebSocket();
     const gridSize = 16;
@@ -34,6 +40,16 @@ interface DrawingComponentProps {
             height: squareSize,
         }))
     );
+
+    // Initialize the squareStates for all squares at the start
+  useEffect(() => {
+    const initialSquareStates = squares.map((square) => ({
+      id: square.id,
+      gridId: square.gridId,
+      color: "#FFFFFF", // Default color is white for all squares
+    }));
+    setSquareStates(initialSquareStates);
+  }, []);
 
     const getSquareId = (x: number, y: number): number | null => {
         const square = squares.find(
@@ -91,9 +107,14 @@ interface DrawingComponentProps {
                                 square.width,
                                 square.height
                             );
-                        }
-                    }
-                );
+            // Update the state with the new color
+            setSquareStates((prev) =>
+              prev.map((s) =>
+                s.id === squareId ? { ...s, color } : s
+              )
+            );
+          }
+        });
              
                 return () => {subscription.unsubscribe();
                            
@@ -174,9 +195,15 @@ interface DrawingComponentProps {
                 body: JSON.stringify({ squareId, color: currentColor }),
               });
             }
-          }
-        } 
-      };
+            // Update the square color state
+        setSquareStates((prev) =>
+          prev.map((s) =>
+            s.id === squareId ? { ...s, color: currentColor } : s
+          )
+        );
+      }
+    }
+  };
 
     const clearSquare = (event: React.MouseEvent<HTMLCanvasElement>) => {
     event.preventDefault();
@@ -207,13 +234,25 @@ interface DrawingComponentProps {
             body: JSON.stringify({ squareId, color: "#FFFFFF" }),
                     });
                 }
+
+                //reset the color to default (white) in state
+                 setSquareStates((prev) =>
+                  prev.map((s) =>
+                    s.id === squareId ? { ...s, color: "#FFFFFF" } : s
+                  )
+                );
+              }
             }
-        }
-    };
+          };
 
     const handleColorSelect = (color:string) => { 
         setCurrentColor(color);
     }
+    
+    const handleSave = () => {
+      const firstGridSquares = squareStates.filter(square => square.gridId === 0);
+      console.log("First Grid States (256 squares):", firstGridSquares);
+    };
     return ( 
     <div> 
         <div> 
@@ -226,6 +265,7 @@ interface DrawingComponentProps {
             <button style={{ backgroundColor: "green", width: 30, height: 30, margin:"1px"}} onClick={() => handleColorSelect("#008000")} /> 
         </div> 
         <canvas onClick={fillSquare} onContextMenu={clearSquare} ref={canvasRef}/>
+        <button onClick={handleSave}>Save</button>
     </div> );
     }
 
