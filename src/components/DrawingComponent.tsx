@@ -250,8 +250,8 @@ interface DrawingComponentProps {
     }
     
     const handleSave = () => {
-      const firstGridSquares = squareStates.filter(square => square.gridId === 0);
-      console.log("First Grid States (256 squares):", firstGridSquares);
+      const mySquares = squareStates.filter(square => square.gridId === assignedSquare);
+      console.log("First Grid States (256 squares):", mySquares);
     };
     return ( 
     <div> 
