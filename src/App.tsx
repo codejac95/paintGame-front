@@ -58,7 +58,8 @@ function App() {
     if (playerData) {
         const player = JSON.parse(playerData); 
 
-        fetch("http://localhost:8080/player/logout", {
+        fetch('https://plankton-app-dtvpj.ondigitalocean.app/player/logout',{
+        // fetch("http://localhost:8080/player/logout", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
