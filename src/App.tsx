@@ -5,6 +5,7 @@ import CreatePlayerForm from './CreatePlayer/CreatePlayerForm'
 import GameComponent from './components/GameComponent';
 import { useWebSocket } from './components/WebSocketComponent';
 import Highscore from './components/Highscore';
+import PictureToArrayComponent from './components/PictureToArrayComponent'
 
 function App() {
   
@@ -14,6 +15,7 @@ function App() {
   const [occupiedSquares, setOccupiedSquares] = useState<number[]>([]); 
   const stompClient = useWebSocket();
   const [showHighscores, setShowHighscores] = useState<boolean>(false);
+  const [showPictureToArray, setShowPictureToArray] = useState<boolean>(false);
 
   useEffect(() => {
     const loggedIn = localStorage.getItem("loggedInPlayer")
@@ -99,6 +101,10 @@ function App() {
             <button onClick={() => setShowHighscores(!showHighscores)}>
         {showHighscores ? 'Hide Highscores' : 'Show Highscores'}
         {showHighscores && <Highscore />}
+      </button>
+      <button onClick={() => setShowPictureToArray(!showPictureToArray)}>
+        {showPictureToArray ? 'Hide PictureToArray' : 'Show PictureToArray'}
+        {showPictureToArray && <PictureToArrayComponent />}
       </button>
 
           </div>
