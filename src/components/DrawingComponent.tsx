@@ -107,6 +107,7 @@ interface DrawingComponentProps {
                 stompClient.onConnect = onConnect;
             }
         }
+        
         if (assignedSquare !== null) {
             const square = squares.find((sq) => sq.gridId === assignedSquare);
             if (square && context) {
@@ -116,7 +117,7 @@ interface DrawingComponentProps {
               context.textBaseline = "bottom"; 
         
               context.fillText(
-                playerName!,
+               playerName!,
                 square.x + square.width / 2,
                 square.y - 5
               );
