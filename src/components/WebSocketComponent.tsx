@@ -17,6 +17,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps>  = ({ children 
             const socket = new SockJS('https://plankton-app-dtvpj.ondigitalocean.app/websocket');
             // const socket = new SockJS('http://localhost:8080/websocket'); 
             const client = new Client({
+
                 webSocketFactory: () => socket,
                 onConnect: () => {
                     console.log('Connected to WebSocket');
