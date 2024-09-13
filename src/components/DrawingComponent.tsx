@@ -107,6 +107,7 @@ interface DrawingComponentProps {
                 stompClient.onConnect = onConnect;
             }
         }
+        
         if (assignedSquare !== null) {
             const square = squares.find((sq) => sq.gridId === assignedSquare);
             if (square && context) {
@@ -116,7 +117,7 @@ interface DrawingComponentProps {
               context.textBaseline = "bottom"; 
         
               context.fillText(
-                playerName!,
+               playerName!,
                 square.x + square.width / 2,
                 square.y - 5
               );
@@ -148,6 +149,8 @@ interface DrawingComponentProps {
     const fillSquare = (event: React.MouseEvent<HTMLCanvasElement>) => {
         const { offsetX, offsetY } = event.nativeEvent;
         const squareId = getSquareId(offsetX, offsetY);
+        console.log("Lägger till Square ID: ",squareId,"color: ", currentColor);
+        
         const square = squares.find((sq) => sq.id === squareId);
 
         if (square && square.gridId === assignedSquare) {
@@ -182,6 +185,7 @@ interface DrawingComponentProps {
     event.preventDefault();
     const { offsetX, offsetY } = event.nativeEvent;
     const squareId = getSquareId(offsetX, offsetY);
+    console.log("Tar bort Square ID: ",squareId,"color: ", currentColor);
     const square = squares.find((sq) => sq.id === squareId);
 
     if (square && square.gridId === assignedSquare) {

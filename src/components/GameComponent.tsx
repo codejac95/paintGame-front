@@ -10,19 +10,10 @@ interface GameCompProp{
 }
 
 function GameComponent({loginStatus, assignedSquare}: GameCompProp) {
-    const [activeComponent, setActiveComponent] = useState<'drawing' | 'image'>('drawing');
+    const [_, setActiveComponent] = useState<'drawing' | 'image'>('drawing');
     const stompClient = useWebSocket();
 
-    const handleButtonClick = (component: 'drawing' | 'image') => {
-        setActiveComponent(component);
-
-        if (component === 'image' && stompClient && stompClient.connected) {
-            stompClient.publish({
-                destination: "/app/showComponent",
-                body: JSON.stringify({ action: 'showImage' }),
-            });
-        }
-    };
+ 
     useEffect(() => {
         if (stompClient) {
             const onConnect = () => {
@@ -50,19 +41,31 @@ function GameComponent({loginStatus, assignedSquare}: GameCompProp) {
             }
         };
     }, [stompClient]);
-const playerName = localStorage.getItem("loggedInPlayer")
+    const playerName = localStorage.getItem("loggedInPlayer");
+    let username = '';
+
+    if (playerName) {
+        try {
+            const parsedPlayer = JSON.parse(playerName); 
+            username = parsedPlayer.username || '';   
+        } catch (error) {
+            console.error("Failed to parse playerName from localStorage", error);
+            username = playerName;
+        }
+    }
+
     return (
         <div>
           {loginStatus && (
             <>
+            <ShowPictureComponent />
               <div>
-                <button onClick={() => handleButtonClick('drawing')}>Players</button>
-                <button onClick={() => handleButtonClick('image')}>Image</button>
+                
               </div>
-              {activeComponent === 'drawing' && assignedSquare !== null && (
-                <DrawingComponent assignedSquare={assignedSquare} playerName={playerName} />
+              {assignedSquare !== null && (
+                <DrawingComponent assignedSquare={assignedSquare} playerName={username} />
               )}
-              {activeComponent === 'image' && <ShowPictureComponent />}
+              
             </>
           )}
         </div>
