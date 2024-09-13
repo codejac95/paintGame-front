@@ -74,8 +74,8 @@ interface DrawingComponentProps {
                 // Notify all clients when the countdown ends
                 if (stompClient && stompClient.connected) {
                     stompClient.publish({
-                        destination: "/app/drawingCountdown",
-                        body: JSON.stringify({ action: "countdownEnded" }),
+                        destination: "/app/countdownEndedDraw",
+                        body: JSON.stringify({ action: "countdownEndedDraw" }),
                     });
                 }
 
@@ -87,7 +87,20 @@ interface DrawingComponentProps {
             }
         });
     }, 1000);
+   
 }, [stompClient]);
+
+const handleStartCountdown = () => {
+  startLocalCountdown(); // Start the countdown locally
+
+  if (stompClient && stompClient.connected) {
+      stompClient.publish({
+          destination: "/app/countdownStartedDraw",
+          body: JSON.stringify({ action: "startCountdownDraw" }),
+      });
+  }
+};
+
 
   //------------------------------------------------
    // WebSocket communication and syncing across clients
@@ -102,11 +115,11 @@ interface DrawingComponentProps {
                     const { action } = JSON.parse(message.body);
                     console.log("Received action:", action);
 
-                    if (action === "startCountdown") {
+                    if (action === "startCountdownDraw") {
                         startLocalCountdown();
                     }
 
-                    if (action === "countdownEnded") {
+                    if (action === "countdownEndedDraw") {
                         clearInterval(countdownIntervalRef.current as NodeJS.Timeout);
                         setIsRunning(false);
                     }
@@ -129,6 +142,9 @@ interface DrawingComponentProps {
         }
     };
 }, [stompClient, startLocalCountdown]);
+
+
+
   //------------------------------------------------
 
     const getSquareId = (x: number, y: number): number | null => {
@@ -339,7 +355,9 @@ interface DrawingComponentProps {
     };
     return ( 
     <div> 
-      { isRunning && countdown > 0 && <p>Countdown: {countdown}</p>}
+     <button onClick={handleStartCountdown} disabled={isRunning}>
+                {isRunning ? `Time Remaining: ${countdown}s` : "Start Countdown"}
+            </button>
         <div> 
         
             <br />
