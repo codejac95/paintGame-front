@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useWebSocket } from "./WebSocketComponent";
+import frogData from '../arraysOfPictures/frog.json';
 
 interface DrawingComponentProps {
     assignedSquare: number | null;
@@ -16,6 +17,7 @@ interface DrawingComponentProps {
     const contextRef = useRef<CanvasRenderingContext2D | null>(null);
     const [currentColor, setCurrentColor] = useState<string>("#000000");
     const [squareStates, setSquareStates] = useState<SquareState[]>([]);
+    const frogArray = frogData.colors;
   
     const stompClient = useWebSocket();
     const gridSize = 16;
@@ -254,8 +256,24 @@ interface DrawingComponentProps {
     }
     
     const handleSave = () => {
-      const mySquares = squareStates.filter(square => square.gridId === assignedSquare);
-      console.log("First Grid States (256 squares):", mySquares);
+      const mySquaresColor = squareStates
+        .filter(square => square.gridId === assignedSquare)
+        .map(square => square.color);
+    
+      console.log("mySquare: ", mySquaresColor);
+      console.log("frogArray: ", frogArray);
+       
+      const minLength = Math.min(mySquaresColor.length, frogArray.length);
+      let matchCount = 0; 
+      
+      for (let i = 0; i < minLength; i++) {
+        if (mySquaresColor[i] === frogArray[i]) {
+          matchCount++;
+        }
+      }
+    
+      const percentMatch = (matchCount / minLength) * 100;
+      console.log(`Percentage match: ${percentMatch}%`);
     };
     return ( 
     <div> 
