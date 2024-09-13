@@ -12,8 +12,10 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps>  = ({ children 
     const [isConnected, setIsConnected] = useState(false);
     
     useEffect(() => { 
+
         // const socket = new SockJS("https://plankton-app-dtvpj.ondigitalocean.app/websocket");
      const socket = new SockJS('http://localhost:8080/websocket');
+
         const client = new Client({   
 
             webSocketFactory: () => socket,
@@ -35,8 +37,8 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps>  = ({ children 
         setStompClient(client);
 
         return () => {
-            if (client.connected) {
-                client.deactivate();
+            if (stompClient) {
+                stompClient.onConnect = () => {};
             }
         };
     }, []);

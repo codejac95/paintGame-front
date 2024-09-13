@@ -58,8 +58,8 @@ function CreatePlayerForm({ onCreatePlayer }: CreatePlayerFormProps) {
     return (
         <>
             <form className="createPlayerForm" onSubmit={(e) => handleSubmit(e, username, password)}>
-                <input type="text" value={username} onChange={((e) => setUsername(e.target.value))}></input>
-                <input type="password" value={password} onChange={((e) => setPassword(e.target.value))}></input>
+                <input type="text" value={username} onChange={((e) => setUsername(e.target.value))} placeholder="Username"></input>
+                <input type="password" value={password} onChange={((e) => setPassword(e.target.value))} placeholder="Password"></input>
                 <button type="submit">Registrera</button>
             </form>
         </>
