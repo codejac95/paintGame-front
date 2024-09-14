@@ -11,6 +11,7 @@ interface GameCompProp{
 
 function GameComponent({loginStatus, assignedSquare}: GameCompProp) {
     const [activeComponent, setActiveComponent] = useState<'drawing' | 'image'>('image');
+    const [imageIndex, setImageIndex] = useState<number>(0);
     const stompClient = useWebSocket();
 
  
@@ -26,8 +27,19 @@ function GameComponent({loginStatus, assignedSquare}: GameCompProp) {
                         
                     }
                 });
+                 // Subscribe to drawingCountdown topic to switch back to image after drawing ends
+                 const countdownSubscription = stompClient.subscribe("/topic/drawingCountdown", (message) => {
+                    const { action } = JSON.parse(message.body);
+                    if (action === "countdownEndedDraw") {
+                        setActiveComponent('image');
+                    }
+                });
 
-                return () => subscription.unsubscribe();
+                return () => {subscription.unsubscribe();
+
+                            //testing
+                            countdownSubscription.unsubscribe();
+                };
             };
 
             if (stompClient.connected) {
@@ -45,11 +57,13 @@ function GameComponent({loginStatus, assignedSquare}: GameCompProp) {
     }, [stompClient]);
 
     const handleImageTimeout = () => {
-        setActiveComponent('drawing');
-        
+        // Use setTimeout to delay state update until after the current render completes
+        setTimeout(() => {
+            setActiveComponent('drawing');
+        }, 0);
+        setImageIndex((prevIndex) => (prevIndex +1) % 5)
     };
-    
-      
+   
     
     
     const playerName = localStorage.getItem("loggedInPlayer");
@@ -72,7 +86,8 @@ function GameComponent({loginStatus, assignedSquare}: GameCompProp) {
             {activeComponent === 'image' && (
               <ShowPictureComponent 
               onPaintTimeout={handleImageTimeout} 
-               
+              imageIndex={imageIndex}
+             
             />
             )}
              {activeComponent === 'drawing' && assignedSquare !== null && (

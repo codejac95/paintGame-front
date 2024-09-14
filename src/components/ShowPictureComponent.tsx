@@ -9,19 +9,22 @@ import SquareImage from "../pictures/Square.png";
 
 interface ShowPictureComponentProps {
       onPaintTimeout: () => void;
-      
-      
+      imageIndex: number;
+    
     }
 
-function ShowPictureComponent({ onPaintTimeout }: ShowPictureComponentProps) {
+function ShowPictureComponent({ onPaintTimeout, imageIndex}: ShowPictureComponentProps) {
     const images = [BallImage, BearImage, DanceImage, FrogImage, SquareImage];
     const [currentImage, setCurrentImage] = useState<string | null>(null);
     const [countdown, setCountdown] = useState<number>(10);
     const [isRunning, setIsRunning] = useState<boolean>(false);
+    const [paintVisible, setPaintVisible] = useState<boolean>(false);
+    const [gameStarted, setGameStarted] = useState<boolean>(false);
     const stompClient = useWebSocket();
-    const imageIndexRef = useRef(0);
     const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
-
+  
+    
+    
     const startLocalCountdown = useCallback(() => {
         setIsRunning(true);
         setCountdown(10);
@@ -37,7 +40,6 @@ function ShowPictureComponent({ onPaintTimeout }: ShowPictureComponentProps) {
                 } else {
                     clearInterval(countdownIntervalRef.current as NodeJS.Timeout);
                     setIsRunning(false);
-                    
 
                     // Publish countdown end message
                     if (stompClient && stompClient.connected) {
@@ -46,97 +48,115 @@ function ShowPictureComponent({ onPaintTimeout }: ShowPictureComponentProps) {
                             body: JSON.stringify({ action: 'countdownEnded' }),
                         });
                     }
-                    
-                    onPaintTimeout();
-                   
-                    
 
-                    setTimeout(() => {
-                       
-                        
-                         setCountdown(10);
-                    },1500)
-                    setCurrentImage(null);
+                    // Notify the parent to show the next image
+                    onPaintTimeout();
                     return 0;
                 }
             });
         }, 1000);
     }, [stompClient, onPaintTimeout]);
 
+   
+
     const showNextImage = useCallback(() => {
-        imageIndexRef.current = (imageIndexRef.current + 1) % images.length;
-        const selectedImage = images[imageIndexRef.current];
+        const selectedImage = images[imageIndex];
         setCurrentImage(selectedImage);
-
+    
         if (stompClient && stompClient.connected) {
-            stompClient.publish({
-                destination: "/app/broadcastImage",
-                body: JSON.stringify({
-                    image: selectedImage,
-                    action: 'startCountdown',
-                }),
-            });
+          stompClient.publish({
+            destination: "/app/broadcastImage",
+            body: JSON.stringify({
+              image: selectedImage,
+              action: 'startCountdown',
+            }),
+          });
         }
-
+    
         startLocalCountdown();
-    }, [stompClient, images, startLocalCountdown]);
+        setGameStarted(true);
+      }, [images, imageIndex, stompClient, startLocalCountdown]);
 
+   
     useEffect(() => {
-        if (stompClient) {
-            const onConnect = () => {
-                const subscription = stompClient.subscribe("/topic/showImage", (message) => {
-                    const { image, action } = JSON.parse(message.body);
-
-                    if (image) {
-                        setCurrentImage(image);
-                    }
-
-                    if (action === 'startCountdown') {
-                        startLocalCountdown();
-                    }
-
-                    if (action === 'countdownEnded') {
-                        // Stop countdown and hide image when countdown ends
-                        clearInterval(countdownIntervalRef.current as NodeJS.Timeout);
-                        setIsRunning(false);
-                        setCurrentImage(null);
-                        
-                    }
-                });
-
-                return () => subscription.unsubscribe();
-            };
-
-            if (stompClient.connected) {
-                onConnect();
-            } else {
-                stompClient.onConnect = onConnect;
-            }
+        if (gameStarted) {
+          setCurrentImage(images[imageIndex]);
         }
-
+      }, [imageIndex, images, gameStarted]);
+        
+   
+  
+    
+      useEffect(() => {
+        if (stompClient) {
+          const onConnect = () => {
+            const subscription = stompClient.subscribe("/topic/showImage", (message) => {
+              const { image, action } = JSON.parse(message.body);
+    
+              if (action === 'startCountdown') {
+                setCurrentImage(image);
+                startLocalCountdown();
+                setGameStarted(true);
+              }
+    
+              if (action === 'countdownEnded') {
+                // Stop countdown and hide image when countdown ends
+                clearInterval(countdownIntervalRef.current as NodeJS.Timeout);
+                setIsRunning(false);
+                setCurrentImage(null);
+                
+               
+              }
+            });
+    
+            return () => subscription.unsubscribe();
+          };
+    
+          if (stompClient.connected) {
+            onConnect();
+          } else {
+            stompClient.onConnect = onConnect;
+          }
+        }
+    
         return () => {
-            if (stompClient) {
-                stompClient.onConnect = () => {};
-            }
+          if (stompClient) {
+            stompClient.onConnect = () => {};
+          }
         };
-    }, [stompClient, startLocalCountdown]);
+      }, [stompClient, startLocalCountdown]);
+
+    //testing
+    useEffect(() => {
+        if (countdown === 0) {
+            setPaintVisible(true);
+            const timer = setTimeout(() => {
+                setPaintVisible(false);
+            }, 1500); // Display "Paint" for 1.5 seconds
+
+            return () => clearTimeout(timer);
+        }
+    }, [countdown]);
+    
 
     return (
         <div>
             
-            {!isRunning && countdown === 10 && (
-                <button onClick={showNextImage}>Start</button>
+            {!isRunning && countdown === 10 && !gameStarted && (
+                <button onClick={showNextImage}>Play Game</button>
             )}
 
-            {currentImage ? (
+                {currentImage && !paintVisible ? (
                 <div>
                     <img src={currentImage} alt="Current" />
                     {isRunning && countdown > 0 && <p>Countdown: {countdown}</p>}
-                
                 </div>
-            ):(countdown === 0 &&<h1>Paint</h1>)}
+            ) : (
+                paintVisible && <h1>Paint</h1>
+            )}
         </div>
     );
 }
 
 export default ShowPictureComponent;
+
