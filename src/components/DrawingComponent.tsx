@@ -4,11 +4,14 @@ import { useWebSocket } from "./WebSocketComponent";
 interface DrawingComponentProps {
     assignedSquare: number | null;
     playerName : string | null;
+   
+    
   }
   interface SquareState{
     id:number;
     gridId:number;
     color:string;
+    
   }
   
   function DrawingComponent({ assignedSquare, playerName }: DrawingComponentProps) {
@@ -18,6 +21,7 @@ interface DrawingComponentProps {
     const [squareStates, setSquareStates] = useState<SquareState[]>([]);
     const [countdown, setCountdown] = useState<number>(10);
     const [isRunning, setIsRunning] = useState<boolean>(false);
+   
     const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
   
     const stompClient = useWebSocket();
@@ -54,10 +58,12 @@ interface DrawingComponentProps {
     setSquareStates(initialSquareStates);
   }, []);
 
+  
   //------------------------------------------------
   const startLocalCountdown = useCallback(() => {
     setIsRunning(true);
     setCountdown(10);
+   
 
     if (countdownIntervalRef.current) {
         clearInterval(countdownIntervalRef.current);
@@ -70,6 +76,7 @@ interface DrawingComponentProps {
             } else {
                 clearInterval(countdownIntervalRef.current as NodeJS.Timeout);
                 setIsRunning(false);
+               
 
                 // Notify all clients when the countdown ends
                 if (stompClient && stompClient.connected) {
@@ -78,6 +85,8 @@ interface DrawingComponentProps {
                         body: JSON.stringify({ action: "countdownEndedDraw" }),
                     });
                 }
+
+                // onDrawingComplete();
 
                 setTimeout(() => {
                     setCountdown(10);
@@ -90,7 +99,8 @@ interface DrawingComponentProps {
    
 }, [stompClient]);
 
-const handleStartCountdown = () => {
+
+const handleStartCountdown = useCallback(() => {
   startLocalCountdown(); // Start the countdown locally
 
   if (stompClient && stompClient.connected) {
@@ -99,7 +109,7 @@ const handleStartCountdown = () => {
           body: JSON.stringify({ action: "startCountdownDraw" }),
       });
   }
-};
+}, [stompClient, startLocalCountdown]);
 
 
   //------------------------------------------------
@@ -111,7 +121,6 @@ const handleStartCountdown = () => {
             const subscription = stompClient.subscribe(
                 "/topic/drawingCountdown",
                 (message) => {
-                  console.log("Received message Faaaaaaaaaaaaaaaaaaaaaaaan:", message.body);
                     const { action } = JSON.parse(message.body);
                     console.log("Received action:", action);
 
@@ -142,6 +151,11 @@ const handleStartCountdown = () => {
         }
     };
 }, [stompClient, startLocalCountdown]);
+
+//Start the countdown when component mounts
+useEffect(() => {
+  handleStartCountdown();
+}, [handleStartCountdown]);
 
 
 
@@ -355,9 +369,14 @@ const handleStartCountdown = () => {
     };
     return ( 
     <div> 
-     <button onClick={handleStartCountdown} disabled={isRunning}>
+     {/* <button onClick={handleStartCountdown} disabled={isRunning}>
                 {isRunning ? `Time Remaining: ${countdown}s` : "Start Countdown"}
-            </button>
+            </button> */}
+             {isRunning && (
+        <div>
+          <h2>Time Remaining: {countdown}s</h2>
+        </div>
+      )}
         <div> 
         
             <br />

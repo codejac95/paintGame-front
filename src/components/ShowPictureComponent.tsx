@@ -7,7 +7,13 @@ import DanceImage from "../pictures/Dance.png";
 import FrogImage from "../pictures/Frog.png";
 import SquareImage from "../pictures/Square.png";
 
-function ShowPictureComponent() {
+interface ShowPictureComponentProps {
+      onPaintTimeout: () => void;
+      
+      
+    }
+
+function ShowPictureComponent({ onPaintTimeout }: ShowPictureComponentProps) {
     const images = [BallImage, BearImage, DanceImage, FrogImage, SquareImage];
     const [currentImage, setCurrentImage] = useState<string | null>(null);
     const [countdown, setCountdown] = useState<number>(10);
@@ -40,17 +46,22 @@ function ShowPictureComponent() {
                             body: JSON.stringify({ action: 'countdownEnded' }),
                         });
                     }
-                  
+                    
+                    onPaintTimeout();
+                   
+                    
+
                     setTimeout(() => {
+                       
                         
-                        setCountdown(10);
+                         setCountdown(10);
                     },1500)
                     setCurrentImage(null);
                     return 0;
                 }
             });
         }, 1000);
-    }, [stompClient]);
+    }, [stompClient, onPaintTimeout]);
 
     const showNextImage = useCallback(() => {
         imageIndexRef.current = (imageIndexRef.current + 1) % images.length;
@@ -89,6 +100,7 @@ function ShowPictureComponent() {
                         clearInterval(countdownIntervalRef.current as NodeJS.Timeout);
                         setIsRunning(false);
                         setCurrentImage(null);
+                        
                     }
                 });
 
@@ -111,7 +123,8 @@ function ShowPictureComponent() {
 
     return (
         <div>
-            {!isRunning && countdown !== 0 && (
+            
+            {!isRunning && countdown === 10 && (
                 <button onClick={showNextImage}>Start</button>
             )}
 

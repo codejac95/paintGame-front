@@ -10,7 +10,7 @@ interface GameCompProp{
 }
 
 function GameComponent({loginStatus, assignedSquare}: GameCompProp) {
-    const [_, setActiveComponent] = useState<'drawing' | 'image'>('drawing');
+    const [activeComponent, setActiveComponent] = useState<'drawing' | 'image'>('image');
     const stompClient = useWebSocket();
 
  
@@ -22,6 +22,8 @@ function GameComponent({loginStatus, assignedSquare}: GameCompProp) {
 
                     if (action === "showImage") {
                         setActiveComponent('image');
+                        
+                        
                     }
                 });
 
@@ -41,6 +43,15 @@ function GameComponent({loginStatus, assignedSquare}: GameCompProp) {
             }
         };
     }, [stompClient]);
+
+    const handleImageTimeout = () => {
+        setActiveComponent('drawing');
+        
+    };
+    
+      
+    
+    
     const playerName = localStorage.getItem("loggedInPlayer");
     let username = '';
 
@@ -58,14 +69,16 @@ function GameComponent({loginStatus, assignedSquare}: GameCompProp) {
         <div>
           {loginStatus && (
             <>
-            <ShowPictureComponent />
-              <div>
-                
-              </div>
-              {assignedSquare !== null && (
+            {activeComponent === 'image' && (
+              <ShowPictureComponent 
+              onPaintTimeout={handleImageTimeout} 
+               
+            />
+            )}
+             {activeComponent === 'drawing' && assignedSquare !== null && (
                 <DrawingComponent assignedSquare={assignedSquare} playerName={username} />
               )}
-              
+     
             </>
           )}
         </div>
