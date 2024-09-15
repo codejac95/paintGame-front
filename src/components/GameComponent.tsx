@@ -10,7 +10,8 @@ interface GameCompProp{
 }
 
 function GameComponent({loginStatus, assignedSquare}: GameCompProp) {
-    const [_, setActiveComponent] = useState<'drawing' | 'image'>('drawing');
+    const [activeComponent, setActiveComponent] = useState<'drawing' | 'image'>('image');
+    const [imageIndex, setImageIndex] = useState<number>(0);
     const stompClient = useWebSocket();
 
  
@@ -22,10 +23,23 @@ function GameComponent({loginStatus, assignedSquare}: GameCompProp) {
 
                     if (action === "showImage") {
                         setActiveComponent('image');
+                        
+                        
+                    }
+                });
+                 // Subscribe to drawingCountdown topic to switch back to image after drawing ends
+                 const countdownSubscription = stompClient.subscribe("/topic/drawingCountdown", (message) => {
+                    const { action } = JSON.parse(message.body);
+                    if (action === "countdownEndedDraw") {
+                        setActiveComponent('image');
                     }
                 });
 
-                return () => subscription.unsubscribe();
+                return () => {subscription.unsubscribe();
+
+                            //testing
+                            countdownSubscription.unsubscribe();
+                };
             };
 
             if (stompClient.connected) {
@@ -41,6 +55,17 @@ function GameComponent({loginStatus, assignedSquare}: GameCompProp) {
             }
         };
     }, [stompClient]);
+
+    const handleImageTimeout = () => {
+        // Use setTimeout to delay state update until after the current render completes
+        setTimeout(() => {
+            setActiveComponent('drawing');
+        }, 0);
+        setImageIndex((prevIndex) => (prevIndex +1) % 5)
+    };
+   
+    
+    
     const playerName = localStorage.getItem("loggedInPlayer");
     let username = '';
 
@@ -58,14 +83,17 @@ function GameComponent({loginStatus, assignedSquare}: GameCompProp) {
         <div>
           {loginStatus && (
             <>
-            <ShowPictureComponent />
-              <div>
-                
-              </div>
-              {assignedSquare !== null && (
+            {activeComponent === 'image' && (
+              <ShowPictureComponent 
+              onPaintTimeout={handleImageTimeout} 
+              imageIndex={imageIndex}
+             
+            />
+            )}
+             {activeComponent === 'drawing' && assignedSquare !== null && (
                 <DrawingComponent assignedSquare={assignedSquare} playerName={username} />
               )}
-              
+     
             </>
           )}
         </div>
