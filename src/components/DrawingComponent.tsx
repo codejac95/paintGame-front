@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useWebSocket } from "./WebSocketComponent";
+import frogData from '../arraysOfPictures/frog.json';
+import { StompSubscription } from '@stomp/stompjs';
 
 interface DrawingComponentProps {
     assignedSquare: number | null;
@@ -19,10 +21,13 @@ interface DrawingComponentProps {
     const contextRef = useRef<CanvasRenderingContext2D | null>(null);
     const [currentColor, setCurrentColor] = useState<string>("#000000");
     const [squareStates, setSquareStates] = useState<SquareState[]>([]);
+    const frogArray = frogData.colors;
+
     const [countdown, setCountdown] = useState<number>(10);
     const [isRunning, setIsRunning] = useState<boolean>(false);
    
     const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
   
     const stompClient = useWebSocket();
     const gridSize = 16;
@@ -362,11 +367,67 @@ useEffect(() => {
     const handleColorSelect = (color:string) => { 
         setCurrentColor(color);
     }
+
+    useEffect(() => {
+      let subscription: StompSubscription | undefined;
+    
+      const onConnect = () => {
+        subscription = stompClient!.subscribe("/topic/percent", (message) => {
+          const data = JSON.parse(message.body);  
+    
+          if (data.playerName && data.percent !== undefined) {
+            console.log(`Player: ${data.playerName}, Percent Match: ${data.percent}%`);
+          } else {
+            console.log("Data does not contain the expected fields.");
+          }
+        });
+      };
+    
+      if (stompClient) {
+        if (stompClient.connected) {
+          onConnect();
+        } else {
+          stompClient.onConnect = onConnect;
+        }
+      }
+    }, [stompClient]);
+    
     
     const handleSave = () => {
-      const mySquares = squareStates.filter(square => square.gridId === assignedSquare);
-      console.log("First Grid States (256 squares):", mySquares);
+      const mySquaresColor = squareStates
+        .filter(square => square.gridId === assignedSquare)
+        .map(square => square.color);
+    
+      
+    
+      const minLength = Math.min(mySquaresColor.length, frogArray.length);
+      let matchCount = 0;
+    
+      for (let i = 0; i < minLength; i++) {
+        if (mySquaresColor[i] === frogArray[i]) {
+          matchCount++;
+        }
+      }
+    
+      const percent = (matchCount / minLength) * 100;
+      console.log(`Percentage match: ${percent}%`);
+    
+      
+      if (stompClient) {
+        stompClient.publish({
+          destination: "/app/percentMatch",
+          body: JSON.stringify({
+            playerName,
+            percent: percent,
+          }),
+          
+          
+        });
+        console.log("percent: ",percent);
+        
+      }
     };
+    
     return ( 
     <div> 
      {/* <button onClick={handleStartCountdown} disabled={isRunning}>

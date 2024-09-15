@@ -3,6 +3,7 @@ import ShowPictureComponent from "./ShowPictureComponent";
 import DrawingComponent from "./DrawingComponent";
 import { useWebSocket } from "./WebSocketComponent";
 
+
 interface GameCompProp{
     loginStatus: boolean;
     assignedSquare: number | null;
