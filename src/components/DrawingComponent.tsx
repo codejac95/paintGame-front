@@ -13,7 +13,6 @@ interface SquareState {
   id: number;
   gridId: number;
   color: string;
-
 }
 
 function DrawingComponent({ assignedSquare, playerName }: DrawingComponentProps) {
@@ -67,7 +66,7 @@ function DrawingComponent({ assignedSquare, playerName }: DrawingComponentProps)
   //------------------------------------------------
   const startLocalCountdown = useCallback(() => {
     setIsRunning(true);
-    setCountdown(60);
+    setCountdown(15);
 
 
     if (countdownIntervalRef.current) {
@@ -432,6 +431,8 @@ function DrawingComponent({ assignedSquare, playerName }: DrawingComponentProps)
 
       });
       console.log("percent: ", percent);
+      localStorage.setItem("myScore", percent.toString())
+
 
     }
   };
@@ -441,11 +442,11 @@ function DrawingComponent({ assignedSquare, playerName }: DrawingComponentProps)
       {/* <button onClick={handleStartCountdown} disabled={isRunning}>
                 {isRunning ? `Time Remaining: ${countdown}s` : "Start Countdown"}
             </button> */}
-      {isRunning && (
+      {isRunning &&
         <div>
           <h2>Time Remaining: {countdown}s</h2>
         </div>
-      )}
+      }
       <div>
 
         <br />
