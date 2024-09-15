@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useWebSocket } from "./WebSocketComponent";
 import frogData from '../arraysOfPictures/frog.json';
+import { StompSubscription } from '@stomp/stompjs';
 
 interface DrawingComponentProps {
     assignedSquare: number | null;
@@ -254,27 +255,67 @@ interface DrawingComponentProps {
     const handleColorSelect = (color:string) => { 
         setCurrentColor(color);
     }
+
+    useEffect(() => {
+      let subscription: StompSubscription | undefined;
+    
+      const onConnect = () => {
+        subscription = stompClient!.subscribe("/topic/percent", (message) => {
+          const data = JSON.parse(message.body);  
+    
+          if (data.playerName && data.percent !== undefined) {
+            console.log(`Player: ${data.playerName}, Percent Match: ${data.percent}%`);
+          } else {
+            console.log("Data does not contain the expected fields.");
+          }
+        });
+      };
+    
+      if (stompClient) {
+        if (stompClient.connected) {
+          onConnect();
+        } else {
+          stompClient.onConnect = onConnect;
+        }
+      }
+    }, [stompClient]);
+    
     
     const handleSave = () => {
       const mySquaresColor = squareStates
         .filter(square => square.gridId === assignedSquare)
         .map(square => square.color);
     
-      console.log("mySquare: ", mySquaresColor);
-      console.log("frogArray: ", frogArray);
-       
-      const minLength = Math.min(mySquaresColor.length, frogArray.length);
-      let matchCount = 0; 
       
+    
+      const minLength = Math.min(mySquaresColor.length, frogArray.length);
+      let matchCount = 0;
+    
       for (let i = 0; i < minLength; i++) {
         if (mySquaresColor[i] === frogArray[i]) {
           matchCount++;
         }
       }
     
-      const percentMatch = (matchCount / minLength) * 100;
-      console.log(`Percentage match: ${percentMatch}%`);
+      const percent = (matchCount / minLength) * 100;
+      console.log(`Percentage match: ${percent}%`);
+    
+      
+      if (stompClient) {
+        stompClient.publish({
+          destination: "/app/percentMatch",
+          body: JSON.stringify({
+            playerName,
+            percent: percent,
+          }),
+          
+          
+        });
+        console.log("percent: ",percent);
+        
+      }
     };
+    
     return ( 
     <div> 
         <div> 
