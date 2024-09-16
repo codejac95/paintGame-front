@@ -67,7 +67,7 @@ function DrawingComponent({ assignedSquare, playerName }: DrawingComponentProps)
   //------------------------------------------------
   const startLocalCountdown = useCallback(() => {
     setIsRunning(true);
-    setCountdown(60);
+    setCountdown(15);
 
 
     if (countdownIntervalRef.current) {
@@ -432,6 +432,7 @@ function DrawingComponent({ assignedSquare, playerName }: DrawingComponentProps)
 
       });
       console.log("percent: ", percent);
+      localStorage.setItem("myScore", percent.toString())
 
     }
   };
@@ -456,7 +457,6 @@ function DrawingComponent({ assignedSquare, playerName }: DrawingComponentProps)
         <button style={{ backgroundColor: "green", width: 30, height: 30, margin: "1px" }} onClick={() => handleColorSelect("#008000")} />
       </div>
       <canvas onClick={fillSquare} onContextMenu={clearSquare} ref={canvasRef} />
-      {/*<button onClick={handleSave}>Save</button>*/}
     </div>
   );
 }
