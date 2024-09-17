@@ -52,6 +52,15 @@ function App() {
     };
   }, [stompClient]);
 
+  const playerData = localStorage.getItem("loggedInPlayer");
+  if (playerData) {
+    const player = JSON.parse(playerData!);
+    const username = player.username;
+
+  }
+
+
+
   function handleLogOut(): void {
     if (assignedSquare !== null && stompClient) {
       stompClient.publish({
@@ -59,13 +68,12 @@ function App() {
         body: JSON.stringify(assignedSquare),
       });
     }
-
-    const playerData = localStorage.getItem("loggedInPlayer");
     if (playerData) {
+
       const player = JSON.parse(playerData);
 
-      fetch('https://plankton-app-dtvpj.ondigitalocean.app/player/logout', {
-        // fetch("http://localhost:8080/player/logout", {
+      //fetch('https://plankton-app-dtvpj.ondigitalocean.app/player/logout', {
+      fetch("http://localhost:8080/player/logout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -102,7 +110,7 @@ function App() {
       if (stompClient) {
         stompClient.publish({
           destination: '/app/assignSquare',
-          body: JSON.stringify(nextSquare),
+          body: JSON.stringify({ nextSquare }),
         });
       }
     } else {
@@ -149,7 +157,7 @@ function App() {
             loginStatus={loginStatus}
             assignedSquare={assignedSquare}
             playerName={loggedInPlayer?.username || 'loggedInUser'}
-           // playerId={loggedInPlayer.id}
+          // playerId={loggedInPlayer.id}
           />
         )}
       </div>

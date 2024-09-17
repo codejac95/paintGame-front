@@ -2,10 +2,14 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { useWebSocket } from "./WebSocketComponent";
 import frogData from '../arraysOfPictures/frog.json';
 import { StompSubscription } from '@stomp/stompjs';
+import HighscoreScreen from "./HighscoreScreen";
 
 interface DrawingComponentProps {
   assignedSquare: number | null;
   playerName: string | null;
+
+  // Viktig jävel för andra uppgifter
+  onComponentChange: (component: "image" | "drawing" | "showHighscoreScreen") => void;
 
 
 }
@@ -16,18 +20,18 @@ interface SquareState {
 
 }
 
-function DrawingComponent({ assignedSquare, playerName }: DrawingComponentProps) {
+function DrawingComponent({ onComponentChange, assignedSquare, playerName }: DrawingComponentProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const contextRef = useRef<CanvasRenderingContext2D | null>(null);
   const [currentColor, setCurrentColor] = useState<string>("#000000");
   const [squareStates, setSquareStates] = useState<SquareState[]>([]);
   const frogArray = frogData.colors;
 
-  const [countdown, setCountdown] = useState<number>(10);
+  const [countdown, setCountdown] = useState<number>(1);
   const [isRunning, setIsRunning] = useState<boolean>(false);
 
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  const [showField, setShowField] = useState <string> ("drawing");
+  const [showField, setShowField] = useState<string>("drawing");
 
 
   const stompClient = useWebSocket();
@@ -65,10 +69,11 @@ function DrawingComponent({ assignedSquare, playerName }: DrawingComponentProps)
   }, []);
 
 
+
   //------------------------------------------------
   const startLocalCountdown = useCallback(() => {
     setIsRunning(true);
-    setCountdown(15);
+    setCountdown(1);
 
 
     if (countdownIntervalRef.current) {
@@ -97,7 +102,7 @@ function DrawingComponent({ assignedSquare, playerName }: DrawingComponentProps)
           // onDrawingComplete();
 
           setTimeout(() => {
-            setCountdown(10);
+            setCountdown(1);
           }, 1500);
 
           return 0;
@@ -439,6 +444,27 @@ function DrawingComponent({ assignedSquare, playerName }: DrawingComponentProps)
     }
   };
 
+  function clearSquaresWhenFinishedGame() {
+    if (stompClient) {
+      stompClient.publish({
+        destination: '/app/resetSquares'
+      }
+      );
+    } else {
+      console.log("else");
+
+    }
+
+    onComponentChange("image")
+
+    console.log("testing");
+  }
+
+  // function get
+
+
+
+
   return (
     <div>
       {/* <button onClick={handleStartCountdown} disabled={isRunning}>
@@ -459,8 +485,14 @@ function DrawingComponent({ assignedSquare, playerName }: DrawingComponentProps)
         <button style={{ backgroundColor: "green", width: 30, height: 30, margin: "1px" }} onClick={() => handleColorSelect("#008000")} />
       </div>}
       {showField === "scoreScreen" && <div>
-          <h1>Score</h1>
-        </div>}
+        <h1>Score</h1>
+        {< HighscoreScreen />}
+
+
+
+
+        <button onClick={clearSquaresWhenFinishedGame}> Reset Game </button>
+      </div>}
       <canvas onClick={fillSquare} onContextMenu={clearSquare} ref={canvasRef} />
     </div>
   );
