@@ -35,7 +35,6 @@ function LoginForm({ onLogin }: LoginFormProps) {
         })
         .then(res => res.json())  
         .then((data: Player) => {
-            
             if (!data.id) {
                 alert("Failed to login");
                 setUsername("")
@@ -45,13 +44,7 @@ function LoginForm({ onLogin }: LoginFormProps) {
                 console.log("Username:", data.username);
                 console.log("Score List:", data.scoreList);
 
-                
                 localStorage.setItem("loggedInPlayer", JSON.stringify(data));
-
-                
-                const storedPlayer = localStorage.getItem("loggedInPlayer");
-                console.log("Stored Player:", storedPlayer);
-
                 onLogin(data.username);  
                 setUsername("");
                 setPassword("");
@@ -64,7 +57,7 @@ function LoginForm({ onLogin }: LoginFormProps) {
     }
 
     return (
-        <>
+        <div className="login-container">
             <form className="loginForm" onSubmit={(e) => handleSubmit(e, username, password)}>
                 <input 
                     type="text" 
@@ -80,7 +73,7 @@ function LoginForm({ onLogin }: LoginFormProps) {
                 />
                 <button type="submit">Logga in</button>
             </form>
-        </>
+        </div>
     );
 }
 
