@@ -149,7 +149,7 @@ function App() {
             loginStatus={loginStatus}
             assignedSquare={assignedSquare}
             playerName={loggedInPlayer?.username || 'loggedInUser'}
-            playerId={loggedInPlayer.id}
+           // playerId={loggedInPlayer.id}
           />
         )}
       </div>
