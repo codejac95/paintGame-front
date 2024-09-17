@@ -27,6 +27,7 @@ function DrawingComponent({ assignedSquare, playerName }: DrawingComponentProps)
   const [isRunning, setIsRunning] = useState<boolean>(false);
 
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [showField, setShowField] = useState <string> ("drawing");
 
 
   const stompClient = useWebSocket();
@@ -138,6 +139,7 @@ function DrawingComponent({ assignedSquare, playerName }: DrawingComponentProps)
             if (action === "countdownEndedDraw") {
               clearInterval(countdownIntervalRef.current as NodeJS.Timeout);
               setIsRunning(false);
+              setShowField("scoreScreen");
             }
           }
         );
@@ -447,7 +449,7 @@ function DrawingComponent({ assignedSquare, playerName }: DrawingComponentProps)
           <h2>Time Remaining: {countdown}s</h2>
         </div>
       )}
-      <div>
+      {showField === "drawing" && <div>
 
         <br />
         <button style={{ backgroundColor: "black", width: 30, height: 30, margin: "1px" }} onClick={() => handleColorSelect("#000000")} />
@@ -455,7 +457,10 @@ function DrawingComponent({ assignedSquare, playerName }: DrawingComponentProps)
         <button style={{ backgroundColor: "blue", width: 30, height: 30, margin: "1px" }} onClick={() => handleColorSelect("#0000FF")} />
         <button style={{ backgroundColor: "yellow", width: 30, height: 30, margin: "1px" }} onClick={() => handleColorSelect("#FFFF00")} />
         <button style={{ backgroundColor: "green", width: 30, height: 30, margin: "1px" }} onClick={() => handleColorSelect("#008000")} />
-      </div>
+      </div>}
+      {showField === "scoreScreen" && <div>
+          <h1>Score</h1>
+        </div>}
       <canvas onClick={fillSquare} onContextMenu={clearSquare} ref={canvasRef} />
     </div>
   );
