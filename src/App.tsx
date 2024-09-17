@@ -1,6 +1,6 @@
 
 import "./types/global"
-import {useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import LoginForm from './Login/LoginForm'
 import CreatePlayerForm from './CreatePlayer/CreatePlayerForm'
 
@@ -47,14 +47,14 @@ function App() {
 
     return () => {
       if (stompClient) {
-        stompClient.onConnect = () => {};
+        stompClient.onConnect = () => { };
       }
     };
   }, [stompClient]);
 
   function handleLogOut(): void {
     if (assignedSquare !== null && stompClient) {
-        stompClient.publish({
+      stompClient.publish({
         destination: '/app/freeSquare',
         body: JSON.stringify(assignedSquare),
       });
@@ -62,26 +62,26 @@ function App() {
 
     const playerData = localStorage.getItem("loggedInPlayer");
     if (playerData) {
-        const player = JSON.parse(playerData); 
+      const player = JSON.parse(playerData);
 
-        fetch('https://plankton-app-dtvpj.ondigitalocean.app/player/logout',{
+      fetch('https://plankton-app-dtvpj.ondigitalocean.app/player/logout', {
         // fetch("http://localhost:8080/player/logout", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(player), 
-        })
-        .then(()=> {
-          console.log("loggar ut: ",player);
-          
-            localStorage.clear();
-            setLoginStatus(false);
-            setJoinedGame(false);
-            setAssignedSquare(null);
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(player),
+      })
+        .then(() => {
+          console.log("loggar ut: ", player);
+
+          localStorage.clear();
+          setLoginStatus(false);
+          setJoinedGame(false);
+          setAssignedSquare(null);
         })
     }
-}
+  }
   function handleLogin(): void {
     const loggedIn = localStorage.getItem('loggedInPlayer');
     if (loggedIn) {
@@ -149,6 +149,7 @@ function App() {
             loginStatus={loginStatus}
             assignedSquare={assignedSquare}
             playerName={loggedInPlayer?.username || 'loggedInUser'}
+            playerId={loggedInPlayer.id}
           />
         )}
       </div>
