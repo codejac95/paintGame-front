@@ -4,15 +4,22 @@ import DrawingComponent from "./DrawingComponent";
 import { useWebSocket } from "./WebSocketComponent";
 import HighscoreScreen from "./HighscoreScreen";
 
+interface Player {
+    id: string;
+    username: string;
+    passord: string;
+    scoreList: string[];
+    loggedIn: boolean;
+}
+
 
 interface GameCompProp {
     loginStatus: boolean;
     assignedSquare: number | null;
     playerName: string;
-    playerId: string;
 }
 
-function GameComponent({ loginStatus, assignedSquare, playerId }: GameCompProp) {
+function GameComponent({ loginStatus, assignedSquare }: GameCompProp) {
     const [activeComponent, setActiveComponent] = useState<'drawing' | 'image' | "showHighscoreScreen">('image');
     const [imageIndex, setImageIndex] = useState<number>(0);
     const stompClient = useWebSocket();
@@ -62,28 +69,33 @@ function GameComponent({ loginStatus, assignedSquare, playerId }: GameCompProp) 
     }, [stompClient]);
 
 
-    //****************************************************
-    // saveScore() fungerar inte men det är något sånt vi ska göra tror jag /Christopher
-    // ***************************************************
     async function saveScore() {
-        if (playerId !== null) {
-            let myScore = localStorage.getItem("myScore")
-
-            fetch("http://localhost:8080/player/update/" + playerId, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Access-Control-Allow-Origin": "*"
-                },
-                body: myScore
-            })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Detta får du tillbaka : " + data);
-
-                    console.log("Du skickade poängen : " + data.score);
-                    console.log("Och användaren med id : " + data.playerId)
-                })
+        const player = localStorage.getItem("loggedInPlayer");
+        if (player !== null) {
+            try {
+                let retrievedPlayer = JSON.parse(player) as Player;
+                console.log(retrievedPlayer.id);
+    
+                const response = await fetch("http://localhost:8080/player/update/" + retrievedPlayer.id, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ "newScore": localStorage.getItem("myScore")
+                        
+                     }),
+                });
+    
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }            
+                    const data = await response.json();
+                    console.log("Du skickade poängen : " + data.scoreList);
+                    console.log("Och användaren : " + data.username);
+                
+            } catch (error) {
+                console.error("Error updating score:", error);
+            }
         } else {
             console.log("There is no player in Local storage");
         }
@@ -93,7 +105,7 @@ function GameComponent({ loginStatus, assignedSquare, playerId }: GameCompProp) 
         // Use setTimeout to delay state update until after the current render completes
         setTimeout(() => {
             setActiveComponent('drawing');
-        }, 0);
+        }, 1);
         setImageIndex((prevIndex) => (prevIndex + 1) % 5)
     };
 
@@ -114,24 +126,15 @@ function GameComponent({ loginStatus, assignedSquare, playerId }: GameCompProp) 
 
     return (
         <>
-            {loginStatus &&
+            {loginStatus && (
                 <div>
-                    {activeComponent === 'image' &&
-                        <ShowPictureComponent
-                            onPaintTimeout={handleImageTimeout}
-                            imageIndex={imageIndex}
-                        />
-                    }
-                    {activeComponent === 'drawing' && assignedSquare !== null &&
-                        <DrawingComponent assignedSquare={assignedSquare} playerName={username} />
-                    }
+                    {activeComponent === 'image' && <ShowPictureComponent onPaintTimeout={handleImageTimeout} imageIndex={imageIndex} />}
+                    {activeComponent === 'drawing' && assignedSquare !== null && <DrawingComponent assignedSquare={assignedSquare} playerName={username} />}
                     {activeComponent === "showHighscoreScreen" && < HighscoreScreen />}
                 </div>
-            }
+            )}
         </>
-    )
+    );
 }
 
 export default GameComponent;
-
-
