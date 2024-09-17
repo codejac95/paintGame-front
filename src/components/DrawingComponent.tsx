@@ -139,6 +139,7 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
 
             if (action === "startCountdownDraw") {
               startLocalCountdown();
+              setShowField("drawing")
             }
 
             if (action === "countdownEndedDraw") {
@@ -485,12 +486,7 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
         <button style={{ backgroundColor: "green", width: 30, height: 30, margin: "1px" }} onClick={() => handleColorSelect("#008000")} />
       </div>}
       {showField === "scoreScreen" && <div>
-        <h1>Score</h1>
         {< HighscoreScreen />}
-
-
-
-
         <button onClick={clearSquaresWhenFinishedGame}> Reset Game </button>
       </div>}
       <canvas onClick={fillSquare} onContextMenu={clearSquare} ref={canvasRef} />
