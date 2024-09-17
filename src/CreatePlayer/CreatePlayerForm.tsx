@@ -19,9 +19,9 @@ function CreatePlayerForm({ onCreatePlayer }: CreatePlayerFormProps) {
 
     function handleSubmit(e: FormEvent<HTMLFormElement>, username: string, password: string): void {
         e.preventDefault();
-        // fetch("http://localhost:8080/player/create", {
+         fetch("http://localhost:8080/player/create", {
 
-            fetch('https://plankton-app-dtvpj.ondigitalocean.app/player/create', {
+           // fetch('https://plankton-app-dtvpj.ondigitalocean.app/player/create', {
 
             method: "POST",
             headers: {
