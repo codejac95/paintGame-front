@@ -1,13 +1,14 @@
 
 import "./types/global"
-import { useEffect, useState } from 'react'
+import {useEffect, useState } from 'react'
 import LoginForm from './Login/LoginForm'
 import CreatePlayerForm from './CreatePlayer/CreatePlayerForm'
+import "./Appp.css";
 
 import GameComponent from './components/GameComponent';
 import { useWebSocket } from './components/WebSocketComponent';
 import Highscore from './components/Highscore';
-//import ScoreUpdateForm from './ScoreUpdateForm';
+
 
 
 function App() {
@@ -47,7 +48,7 @@ function App() {
 
     return () => {
       if (stompClient) {
-        stompClient.onConnect = () => { };
+        stompClient.onConnect = () => {};
       }
     };
   }, [stompClient]);
@@ -61,7 +62,7 @@ function App() {
 
   function handleLogOut(): void {
     if (assignedSquare !== null && stompClient) {
-      stompClient.publish({
+        stompClient.publish({
         destination: '/app/freeSquare',
         body: JSON.stringify(assignedSquare),
       });
@@ -69,26 +70,26 @@ function App() {
 
     const playerData = localStorage.getItem("loggedInPlayer");
     if (playerData) {
-      const player = JSON.parse(playerData);
+        const player = JSON.parse(playerData); 
 
-      fetch('https://plankton-app-dtvpj.ondigitalocean.app/player/logout', {
+        fetch('https://plankton-app-dtvpj.ondigitalocean.app/player/logout',{
         // fetch("http://localhost:8080/player/logout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(player),
-      })
-        .then(() => {
-          console.log("loggar ut: ", player);
-
-          localStorage.clear();
-          setLoginStatus(false);
-          setJoinedGame(false);
-          setAssignedSquare(null);
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(player), 
+        })
+        .then(()=> {
+          console.log("loggar ut: ",player);
+          
+            localStorage.clear();
+            setLoginStatus(false);
+            setJoinedGame(false);
+            setAssignedSquare(null);
         })
     }
-  }
+}
   function handleLogin(): void {
     const loggedIn = localStorage.getItem('loggedInPlayer');
     if (loggedIn) {
@@ -131,32 +132,34 @@ function App() {
                 Join game
               </button>
             )}
-            <button onClick={() => setShowHighscores(!showHighscores)}>
+            <button onClick={() => setShowHighscores(!showHighscores)} className="highscoreBtn">
               {showHighscores ? 'Hide Highscores' : 'Show Highscores'}
             </button>
             {showHighscores && <Highscore />}
+
 
             {/* Render ScoreUpdateForm when logged in */}
             {/* {loggedInPlayer && (
               <ScoreUpdateForm playerId={loggedInPlayer.id} />
             )} */}
+
           </div>
         ) : (
-          <div className="loggedOutHeader">
+          <div className="authContainer">
             <h1 className="loggedOutHeaderText">Paint Game</h1>
-            {loginStatus === false ? <CreatePlayerForm onCreatePlayer={handleLogin} /> : null}
-            {loginStatus === false ? <LoginForm onLogin={handleLogin} /> : null}
+            <h2>Registrera</h2>
+            <CreatePlayerForm onCreatePlayer={handleLogin} />
+            <h2>Logga in</h2>
+            <LoginForm onLogin={handleLogin} />
           </div>
         )}
       </div>
       <div>
-        {/* Show GameComponent if the user is logged in and has joined the game */}
         {loginStatus && joinedGame && (
           <GameComponent
             loginStatus={loginStatus}
             assignedSquare={assignedSquare}
             playerName={loggedInPlayer?.username || 'loggedInUser'}
-           // playerId={loggedInPlayer.id}
           />
         )}
       </div>

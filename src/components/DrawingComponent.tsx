@@ -460,31 +460,33 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
   }
 
   return (
-    <div>
-      {/* <button onClick={handleStartCountdown} disabled={isRunning}>
-                {isRunning ? `Time Remaining: ${countdown}s` : "Start Countdown"}
-            </button> */}
+    <div className="canvas-container">
       {isRunning && (
         <div>
           <h2>Time Remaining: {countdown}s</h2>
         </div>
       )}
-      {showField === "drawing" && <div>
 
-        <br />
-        <button style={{ backgroundColor: "black", width: 30, height: 30, margin: "1px" }} onClick={() => handleColorSelect("#000000")} />
-        <button style={{ backgroundColor: "red", width: 30, height: 30, margin: "1px" }} onClick={() => handleColorSelect("#FF0000")} />
-        <button style={{ backgroundColor: "blue", width: 30, height: 30, margin: "1px" }} onClick={() => handleColorSelect("#0000FF")} />
-        <button style={{ backgroundColor: "yellow", width: 30, height: 30, margin: "1px" }} onClick={() => handleColorSelect("#FFFF00")} />
-        <button style={{ backgroundColor: "green", width: 30, height: 30, margin: "1px" }} onClick={() => handleColorSelect("#008000")} />
-      </div>}
-      {showField === "scoreScreen" && <div>
-        {< HighscoreScreen />}
-        <button onClick={clearSquaresWhenFinishedGame}> Reset Game </button>
-        </div>}
+      {showField === "drawing" && (
+        <div className="color-picker">
+          <br />
+          <button style={{ backgroundColor: "black", width: 30, height: 30, margin: "1px" }} onClick={() => handleColorSelect("#000000")} />
+          <button style={{ backgroundColor: "red", width: 30, height: 30, margin: "1px" }} onClick={() => handleColorSelect("#FF0000")} />
+          <button style={{ backgroundColor: "blue", width: 30, height: 30, margin: "1px" }} onClick={() => handleColorSelect("#0000FF")} />
+          <button style={{ backgroundColor: "yellow", width: 30, height: 30, margin: "1px" }} onClick={() => handleColorSelect("#FFFF00")} />
+          <button style={{ backgroundColor: "green", width: 30, height: 30, margin: "1px" }} onClick={() => handleColorSelect("#008000")} />
+        </div>
+      )}
+      {showField === "scoreScreen" && (
+        <div>
+          <h1>Score</h1>
+        </div>
+      )}
+
       <canvas onClick={fillSquare} onContextMenu={clearSquare} ref={canvasRef} />
     </div>
   );
+  
 }
 
 export default DrawingComponent;
