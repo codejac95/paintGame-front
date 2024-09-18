@@ -1,29 +1,51 @@
-import { useEffect } from "react";
-import { useWebSocket } from "./WebSocketComponent";
+import React, { useEffect, useState } from 'react';
 
-function HighscoreScreen() {
-    const stompClient = useWebSocket();
+ interface PlayerScoreDto {
+    username: string;
+    latestScore: number | null; 
+  }
+  
 
-    useEffect(() => {
-        if (stompClient) {
-            stompClient.publish({
-                destination: '/app/resetSquares'
-            }
-        );
-        } else {
-            console.log("else");
-            
-        }
-        console.log("testing");
+const HighScoreScreen: React.FC = () => {
+  const [players, setPlayers] = useState<PlayerScoreDto[]>([]);
+  
+
+  useEffect(() => {
+    
+    const fetchPlayers = async () => {
+      
+        const response = await fetch('http://localhost:8080/player/loggedinPlayersScores');
         
-    }, [stompClient]); 
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
 
-    return (
-        <>
-            <h1>Hejsan</h1>
-            <h2>Här ska det vara en lista med den senaste matchens resultat</h2>
-        </>
-    );
-}
+        const data: PlayerScoreDto[] = await response.json();
+        setPlayers(data);
+        
+      
+      
+    };
 
-export default HighscoreScreen;
+    fetchPlayers();
+  }, []);
+
+
+  return (
+    <div>
+      <h2>Score</h2>
+      {players.length > 0 && (
+        <ul>
+          {players.map((player) => (
+            <li key={player.username}>
+              <strong>{player.username}</strong>: {player.latestScore !== null ? `${player.latestScore}%` : ''}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+  
+};
+
+export default HighScoreScreen;

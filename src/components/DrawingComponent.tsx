@@ -16,6 +16,11 @@ interface SquareState {
 
 }
 
+interface PlayerAndScore{
+  player : string;
+  score : number;
+}
+
 function DrawingComponent({ assignedSquare, playerName }: DrawingComponentProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const contextRef = useRef<CanvasRenderingContext2D | null>(null);
@@ -28,6 +33,7 @@ function DrawingComponent({ assignedSquare, playerName }: DrawingComponentProps)
 
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const [showField, setShowField] = useState <string> ("drawing");
+  const [playerAndScore, setPLayerAndScore] = useState <PlayerAndScore []> ([]);
 
 
   const stompClient = useWebSocket();
@@ -434,6 +440,8 @@ function DrawingComponent({ assignedSquare, playerName }: DrawingComponentProps)
 
       });
       console.log("percent: ", percent);
+      
+      
       localStorage.setItem("myScore", percent.toString())
 
     }
@@ -459,7 +467,7 @@ function DrawingComponent({ assignedSquare, playerName }: DrawingComponentProps)
         <button style={{ backgroundColor: "green", width: 30, height: 30, margin: "1px" }} onClick={() => handleColorSelect("#008000")} />
       </div>}
       {showField === "scoreScreen" && <div>
-          <h1>Score</h1>
+          <h1>Score: </h1>
         </div>}
       <canvas onClick={fillSquare} onContextMenu={clearSquare} ref={canvasRef} />
     </div>

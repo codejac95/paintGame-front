@@ -8,6 +8,7 @@ import GameComponent from './components/GameComponent';
 import { useWebSocket } from './components/WebSocketComponent';
 import Highscore from './components/Highscore';
 import ScoreUpdateForm from './ScoreUpdateForm';
+import HighscoreScreen from "./components/HighscoreScreen";
 
 
 function App() {
@@ -133,6 +134,7 @@ function App() {
             {loggedInPlayer && (
               <ScoreUpdateForm playerId={loggedInPlayer.id} />
             )}
+            {/* <HighscoreScreen /> */}
           </div>
         ) : (
           <div className="loggedOutHeader">
