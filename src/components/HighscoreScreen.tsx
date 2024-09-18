@@ -66,7 +66,7 @@ function HighscoreScreen() {
 
     return (
         <>
-            <button onClick={showScore} >Poängen då va</button>
+            <button onClick={showScore} > Visa Poäng</button>
 
             {showScoreForRealsBool === true &&
                 <div> <p>{player1Name} fick {player1Score}% rätt</p>
