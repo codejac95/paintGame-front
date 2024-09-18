@@ -12,6 +12,8 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
     const [isConnected, setIsConnected] = useState(false);
 
     useEffect(() => {
+        console.log(isConnected);
+        
 
         const socket = new SockJS("https://plankton-app-dtvpj.ondigitalocean.app/websocket");
          // const socket = new SockJS('http://localhost:8080/websocket');
@@ -46,8 +48,6 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
     return (
         <WebSocketContext.Provider value={stompClient}>
             <div>
-                <h2>WebSocket Testing </h2>
-                <p>WebSocket is {isConnected ? 'connected' : 'disconnected'}</p>
                 {children}
             </div>
         </WebSocketContext.Provider>
