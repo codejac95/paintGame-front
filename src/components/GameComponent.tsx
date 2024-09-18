@@ -1,4 +1,4 @@
-import { Component, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import ShowPictureComponent from "./ShowPictureComponent";
 import DrawingComponent from "./DrawingComponent";
 import { useWebSocket } from "./WebSocketComponent";

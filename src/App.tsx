@@ -7,7 +7,7 @@ import CreatePlayerForm from './CreatePlayer/CreatePlayerForm'
 import GameComponent from './components/GameComponent';
 import { useWebSocket } from './components/WebSocketComponent';
 import Highscore from './components/Highscore';
-import ScoreUpdateForm from './ScoreUpdateForm';
+//import ScoreUpdateForm from './ScoreUpdateForm';
 
 
 function App() {
@@ -54,8 +54,8 @@ function App() {
 
   const playerData = localStorage.getItem("loggedInPlayer");
   if (playerData) {
-    const player = JSON.parse(playerData!);
-    const username = player.username;
+   // const player = JSON.parse(playerData!);
+   // const username = player.username;
 
   }
 
@@ -137,9 +137,9 @@ function App() {
             {showHighscores && <Highscore />}
 
             {/* Render ScoreUpdateForm when logged in */}
-            {loggedInPlayer && (
+            {/* {loggedInPlayer && (
               <ScoreUpdateForm playerId={loggedInPlayer.id} />
-            )}
+            )} */}
           </div>
         ) : (
           <div className="loggedOutHeader">

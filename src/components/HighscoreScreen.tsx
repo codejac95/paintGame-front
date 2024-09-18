@@ -1,14 +1,13 @@
-import { useEffect,useState } from "react";
-import { useWebSocket } from "./WebSocketComponent";
-import React from "react";
+import { useState } from "react";
+//import { useWebSocket } from "./WebSocketComponent";
 
-interface Player {
-    playerName: string,
-    playerScore: number[];
-}
+// interface Player {
+//     playerName: string,
+//     playerScore: number[];
+// }
 
 function HighscoreScreen() {
-    const stompClient = useWebSocket();
+  //  const stompClient = useWebSocket();
     const [player1Name, setPlayer1Name] = useState<string>("");
     const [player2Name, setPlayer2Name] = useState<string>("");
     const [player3Name, setPlayer3Name] = useState<string>("");
