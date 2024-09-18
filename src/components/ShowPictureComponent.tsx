@@ -14,7 +14,7 @@ interface ShowPictureComponentProps {
     }
 
 function ShowPictureComponent({ onPaintTimeout, imageIndex}: ShowPictureComponentProps) {
-    const images = [BallImage, BearImage, DanceImage, FrogImage, SquareImage];
+    const images = [FrogImage, BallImage, BearImage, DanceImage, SquareImage];
     const [currentImage, setCurrentImage] = useState<string | null>(null);
     const [countdown, setCountdown] = useState<number>(10);
     const [isRunning, setIsRunning] = useState<boolean>(false);
