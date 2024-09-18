@@ -2,11 +2,14 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { useWebSocket } from "./WebSocketComponent";
 import frogData from '../arraysOfPictures/frog.json';
 import { StompSubscription } from '@stomp/stompjs';
+import HighscoreScreen from "./HighscoreScreen";
 
 interface DrawingComponentProps {
   assignedSquare: number | null;
   playerName: string | null;
 
+  // Viktig jävel för andra uppgifter
+  onComponentChange: (component: "image" | "drawing" | "showHighscoreScreen") => void;
 
 }
 interface SquareState {
@@ -16,7 +19,7 @@ interface SquareState {
 
 }
 
-function DrawingComponent({ assignedSquare, playerName }: DrawingComponentProps) {
+function DrawingComponent({ onComponentChange, assignedSquare, playerName }: DrawingComponentProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const contextRef = useRef<CanvasRenderingContext2D | null>(null);
   const [currentColor, setCurrentColor] = useState<string>("#000000");
@@ -134,6 +137,7 @@ function DrawingComponent({ assignedSquare, playerName }: DrawingComponentProps)
 
             if (action === "startCountdownDraw") {
               startLocalCountdown();
+              setShowField("drawing")
             }
 
             if (action === "countdownEndedDraw") {
@@ -439,6 +443,22 @@ function DrawingComponent({ assignedSquare, playerName }: DrawingComponentProps)
     }
   };
 
+  function clearSquaresWhenFinishedGame() {
+    if (stompClient) {
+      stompClient.publish({
+        destination: '/app/resetSquares'
+      }
+      );
+    } else {
+      console.log("else");
+
+    }
+
+    onComponentChange("image")
+
+    console.log("testing");
+  }
+
   return (
     <div className="canvas-container">
       {isRunning && (
@@ -446,6 +466,7 @@ function DrawingComponent({ assignedSquare, playerName }: DrawingComponentProps)
           <h2>Time Remaining: {countdown}s</h2>
         </div>
       )}
+
       {showField === "drawing" && (
         <div className="color-picker">
           <br />
@@ -461,6 +482,7 @@ function DrawingComponent({ assignedSquare, playerName }: DrawingComponentProps)
           <h1>Score</h1>
         </div>
       )}
+
       <canvas onClick={fillSquare} onContextMenu={clearSquare} ref={canvasRef} />
     </div>
   );

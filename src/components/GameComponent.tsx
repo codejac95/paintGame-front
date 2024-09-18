@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import ShowPictureComponent from "./ShowPictureComponent";
 import DrawingComponent from "./DrawingComponent";
 import { useWebSocket } from "./WebSocketComponent";
@@ -25,6 +25,12 @@ function GameComponent({ loginStatus, assignedSquare,  }: GameCompProp) {
     const [imageIndex, setImageIndex] = useState<number>(0);
     const stompClient = useWebSocket();
 
+        // Viktig jävel för andra uppgifter
+        const handleComponentChange = (component: "image" | "drawing" | "showHighscoreScreen") => {
+
+            setActiveComponent(component)
+        }
+
 
 
     useEffect(() => {
@@ -44,7 +50,7 @@ function GameComponent({ loginStatus, assignedSquare,  }: GameCompProp) {
                     const { action } = JSON.parse(message.body);
                     if (action === "countdownEndedDraw") {
                         saveScore()
-                        setActiveComponent('showHighscoreScreen');
+// setActiveComponent('showHighscoreScreen');
                     }
                 });
 
@@ -132,7 +138,7 @@ function GameComponent({ loginStatus, assignedSquare,  }: GameCompProp) {
             {loginStatus && (
                 <div>
                     {activeComponent === 'image' && <ShowPictureComponent onPaintTimeout={handleImageTimeout} imageIndex={imageIndex} />}
-                    {activeComponent === 'drawing' && assignedSquare !== null && <DrawingComponent assignedSquare={assignedSquare} playerName={username} />}
+                    {activeComponent === 'drawing' && assignedSquare !== null && <DrawingComponent onComponentChange={handleComponentChange} assignedSquare={assignedSquare} playerName={username} />}
                     {activeComponent === "showHighscoreScreen" && < HighscoreScreen />}
                 </div>
             )}

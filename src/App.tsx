@@ -10,6 +10,7 @@ import { useWebSocket } from './components/WebSocketComponent';
 import Highscore from './components/Highscore';
 
 
+
 function App() {
   const [loginStatus, setLoginStatus] = useState<boolean>(false);
   const [joinedGame, setJoinedGame] = useState<boolean>(false);
@@ -51,6 +52,13 @@ function App() {
       }
     };
   }, [stompClient]);
+
+  const playerData = localStorage.getItem("loggedInPlayer");
+  if (playerData) {
+   // const player = JSON.parse(playerData!);
+   // const username = player.username;
+
+  }
 
   function handleLogOut(): void {
     if (assignedSquare !== null && stompClient) {
@@ -128,6 +136,12 @@ function App() {
               {showHighscores ? 'Hide Highscores' : 'Show Highscores'}
             </button>
             {showHighscores && <Highscore />}
+
+
+            {/* Render ScoreUpdateForm when logged in */}
+            {/* {loggedInPlayer && (
+              <ScoreUpdateForm playerId={loggedInPlayer.id} />
+            )} */}
 
           </div>
         ) : (
