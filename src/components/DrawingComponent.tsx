@@ -70,7 +70,7 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
   //------------------------------------------------
   const startLocalCountdown = useCallback(() => {
     setIsRunning(true);
-    setCountdown(15);
+    setCountdown(60);
 
 
     if (countdownIntervalRef.current) {

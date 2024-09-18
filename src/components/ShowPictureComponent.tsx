@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useWebSocket } from "./WebSocketComponent";
 
-import BallImage from "../pictures/Ball.png";
-import BearImage from "../pictures/Bear.png";
-import DanceImage from "../pictures/Dance.png";
+//import BallImage from "../pictures/Ball.png";
+//import BearImage from "../pictures/Bear.png";
+//import DanceImage from "../pictures/Dance.png";
 import FrogImage from "../pictures/Frog.png";
-import SquareImage from "../pictures/Square.png";
+//import SquareImage from "../pictures/Square.png";
 
 interface ShowPictureComponentProps {
       onPaintTimeout: () => void;
@@ -14,7 +14,7 @@ interface ShowPictureComponentProps {
     }
 
 function ShowPictureComponent({ onPaintTimeout, imageIndex}: ShowPictureComponentProps) {
-    const images = [FrogImage, BallImage, BearImage, DanceImage, SquareImage];
+    const images = [FrogImage];
     const [currentImage, setCurrentImage] = useState<string | null>(null);
     const [countdown, setCountdown] = useState<number>(10);
     const [isRunning, setIsRunning] = useState<boolean>(false);
