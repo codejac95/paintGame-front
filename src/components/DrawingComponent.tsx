@@ -16,7 +16,6 @@ interface SquareState {
   id: number;
   gridId: number;
   color: string;
-
 }
 
 function DrawingComponent({ onComponentChange, assignedSquare, playerName }: DrawingComponentProps) {

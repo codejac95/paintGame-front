@@ -103,7 +103,7 @@ function ShowPictureComponent({ onPaintTimeout, imageIndex}: ShowPictureComponen
                 // Stop countdown and hide image when countdown ends
                 clearInterval(countdownIntervalRef.current as NodeJS.Timeout);
                 setIsRunning(false);
-                setCurrentImage(null);
+                setPaintVisible(true);
                 
                
               }
