@@ -1,10 +1,6 @@
-/* Lägg till bakgrundsbilden till hela body eller en specifik container */
 
-body {
-    background-image: url('./path/to/paint-roller-color-colour.jpg');
-    /* Ensure this path is correct */
-    background-size: cover;
-}
+
+
 
 .authContainer {
     display: flex;
@@ -103,7 +99,3 @@ button:hover {
     /* Space between the color picker and the canvas */
 }
 
-canvas {
-    border: 1px solid #000;
-    /* Optional: to visualize the canvas boundary */
-}
