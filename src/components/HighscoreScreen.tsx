@@ -12,10 +12,10 @@ function HighscoreScreen() {
     const [player4Score, setPlayer4Score] = useState<number>(0);
 
     const [showScoreForRealsBool, setShowScoreForRealsBool] = useState<boolean>(false)
-    
+
     async function showScore() {
-        // const response = await fetch('https://plankton-app-dtvpj.ondigitalocean.app/player/getAll', {
-        const response = await fetch("http://localhost:8080/player/getAll", {
+        const response = await fetch('https://plankton-app-dtvpj.ondigitalocean.app/player/getAll', {
+            //const response = await fetch("http://localhost:8080/player/getAll", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",

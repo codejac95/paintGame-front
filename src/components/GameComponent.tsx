@@ -76,8 +76,8 @@ function GameComponent({ loginStatus, assignedSquare, }: GameCompProp) {
                 let retrievedPlayer = JSON.parse(player) as Player;
                 console.log(retrievedPlayer.id);
 
-                //const response = await fetch('https://plankton-app-dtvpj.ondigitalocean.app/player/update/' + retrievedPlayer.id, {
-                const response = await fetch("http://localhost:8080/player/update/" + retrievedPlayer.id, {
+                const response = await fetch('https://plankton-app-dtvpj.ondigitalocean.app/player/update/' + retrievedPlayer.id, {
+                    //const response = await fetch("http://localhost:8080/player/update/" + retrievedPlayer.id, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
