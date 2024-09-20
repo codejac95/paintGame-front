@@ -104,7 +104,7 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
 
 
   const handleStartCountdown = useCallback(() => {
-    startLocalCountdown(); 
+    startLocalCountdown();
     if (stompClient && stompClient.connected) {
       stompClient.publish({
         destination: "/app/countdownStartedDraw",
@@ -213,7 +213,7 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
                 square.width,
                 square.height
               );
-  
+
               setSquareStates((prev) =>
                 prev.map((s) =>
                   s.id === squareId ? { ...s, color } : s
@@ -359,6 +359,8 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
 
   useEffect(() => {
     let subscription: StompSubscription | undefined;
+    console.log(subscription);
+
 
     const onConnect = () => {
       subscription = stompClient!.subscribe("/topic/percent", (message) => {
