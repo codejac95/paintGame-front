@@ -3,15 +3,12 @@ import { FormEvent, useState } from "react";
 interface CreatePlayerFormProps {
     onCreatePlayer: (loggedInPlayer: string) => void;
 }
-
 interface Player {
     id: string;
     username: string;
     password: string;
     scoreList: []; 
 } 
-
-
 
 function CreatePlayerForm({ onCreatePlayer }: CreatePlayerFormProps) {
     const [username, setUsername] = useState<string>('');
@@ -20,9 +17,7 @@ function CreatePlayerForm({ onCreatePlayer }: CreatePlayerFormProps) {
     function handleSubmit(e: FormEvent<HTMLFormElement>, username: string, password: string): void {
         e.preventDefault();
         // fetch("http://localhost:8080/player/create", {
-
             fetch('https://plankton-app-dtvpj.ondigitalocean.app/player/create', {
-
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -36,22 +31,14 @@ function CreatePlayerForm({ onCreatePlayer }: CreatePlayerFormProps) {
         })
             .then(res => res.json()) 
             .then((data: Player) => {
-                
-                     
-                
-                    // const loggedInPlayer = JSON.stringify(data); 
-                    localStorage.setItem("loggedInPlayer", JSON.stringify(data));
-                   
-                    const CreateTtest = localStorage.getItem("loggedInPlayer");
-                    console.log("LoggedInPlayer:", CreateTtest);
-                    
-                   
-                   
-                    onCreatePlayer(data.username);
-                    setUsername("");
-                    setPassword("");
-                    alert(`Welcome ${data.username}`);
-                
+                // const loggedInPlayer = JSON.stringify(data); 
+                localStorage.setItem("loggedInPlayer", JSON.stringify(data));
+                const CreateTtest = localStorage.getItem("loggedInPlayer");
+                console.log("LoggedInPlayer:", CreateTtest);            
+                onCreatePlayer(data.username);
+                setUsername("");
+                setPassword("");
+                alert(`Welcome ${data.username}`);       
             })
     }
 

@@ -12,7 +12,6 @@ interface Player {
     loggedIn: boolean;
 }
 
-
 interface GameCompProp {
     
     loginStatus: boolean;
@@ -45,7 +44,6 @@ function GameComponent({ loginStatus, assignedSquare,  }: GameCompProp) {
 
                     }
                 });
-                // Subscribe to drawingCountdown topic to switch back to image after drawing ends
                 const countdownSubscription = stompClient.subscribe("/topic/drawingCountdown", (message) => {
                     const { action } = JSON.parse(message.body);
                     if (action === "countdownEndedDraw") {
@@ -57,7 +55,6 @@ function GameComponent({ loginStatus, assignedSquare,  }: GameCompProp) {
                 return () => {
                     subscription.unsubscribe();
 
-                    //testing
                     countdownSubscription.unsubscribe();
                 };
             };
@@ -111,7 +108,6 @@ function GameComponent({ loginStatus, assignedSquare,  }: GameCompProp) {
     }
 
     const handleImageTimeout = () => {
-        // Use setTimeout to delay state update until after the current render completes
         setTimeout(() => {
             setActiveComponent('drawing');
         }, 1);

@@ -9,7 +9,6 @@ import { useWebSocket } from './components/WebSocketComponent';
 import Highscore from './components/Highscore';
 //import ScoreUpdateForm from './ScoreUpdateForm';
 
-
 function App() {
   const [loginStatus, setLoginStatus] = useState<boolean>(false);
   const [joinedGame, setJoinedGame] = useState<boolean>(false);
@@ -136,7 +135,6 @@ function App() {
             </button>
             {showHighscores && <Highscore />}
 
-            {/* Render ScoreUpdateForm when logged in */}
             {/* {loggedInPlayer && (
               <ScoreUpdateForm playerId={loggedInPlayer.id} />
             )} */}
@@ -150,7 +148,6 @@ function App() {
         )}
       </div>
       <div>
-        {/* Show GameComponent if the user is logged in and has joined the game */}
         {loginStatus && joinedGame && (
           <GameComponent
             loginStatus={loginStatus}

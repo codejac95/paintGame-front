@@ -56,12 +56,11 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
     }))
   );
 
-  // Initialize the squareStates for all squares at the start
   useEffect(() => {
     const initialSquareStates = squares.map((square) => ({
       id: square.id,
       gridId: square.gridId,
-      color: "#FFFFFF", // Default color is white for all squares
+      color: "#FFFFFF", 
     }));
     setSquareStates(initialSquareStates);
   }, []);
@@ -87,8 +86,6 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
           clearInterval(countdownIntervalRef.current as NodeJS.Timeout);
           setIsRunning(false);
 
-
-          // Notify all clients when the countdown ends
           if (stompClient && stompClient.connected) {
             stompClient.publish({
               destination: "/app/countdownEndedDraw",
@@ -111,7 +108,7 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
 
 
   const handleStartCountdown = useCallback(() => {
-    startLocalCountdown(); // Start the countdown locally
+    startLocalCountdown(); 
 
     if (stompClient && stompClient.connected) {
       stompClient.publish({
@@ -122,8 +119,6 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
   }, [stompClient, startLocalCountdown]);
 
 
-  //------------------------------------------------
-  // WebSocket communication and syncing across clients
   useEffect(() => {
     if (stompClient) {
       const onConnect = () => {
@@ -164,7 +159,6 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
     };
   }, [stompClient, startLocalCountdown]);
 
-  //Start the countdown when component mounts
   useEffect(() => {
     handleStartCountdown();
   }, [handleStartCountdown]);
@@ -229,7 +223,7 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
                 square.width,
                 square.height
               );
-              // Update the state with the new color
+  
               setSquareStates((prev) =>
                 prev.map((s) =>
                   s.id === squareId ? { ...s, color } : s
@@ -321,7 +315,7 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
             body: JSON.stringify({ squareId, color: currentColor }),
           });
         }
-        // Update the square color state
+
         setSquareStates((prev) =>
           prev.map((s) =>
             s.id === squareId ? { ...s, color: currentColor } : s
@@ -362,7 +356,6 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
           });
         }
 
-        //reset the color to default (white) in state
         setSquareStates((prev) =>
           prev.map((s) =>
             s.id === squareId ? { ...s, color: "#FFFFFF" } : s

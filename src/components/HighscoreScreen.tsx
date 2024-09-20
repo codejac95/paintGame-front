@@ -12,16 +12,12 @@ function HighscoreScreen() {
     const [player2Name, setPlayer2Name] = useState<string>("");
     const [player3Name, setPlayer3Name] = useState<string>("");
     const [player4Name, setPlayer4Name] = useState<string>("");
-
     const [player1Score, setPlayer1Score] = useState<number>(0);
     const [player2Score, setPlayer2Score] = useState<number>(0);
     const [player3Score, setPlayer3Score] = useState<number>(0);
     const [player4Score, setPlayer4Score] = useState<number>(0);
 
     const [showScoreForRealsBool, setShowScoreForRealsBool] = useState<boolean>(false)
-
-
-
 
     async function showScore() {
 
@@ -50,7 +46,6 @@ function HighscoreScreen() {
         console.log("Den första spelaren i listan" + data[1].playerScore);
 
         showScoreForReals()
-
     }
 
     function showScoreForReals() {
@@ -61,9 +56,6 @@ function HighscoreScreen() {
         }
     }
 
-
-
-
     return (
         <>
             <button onClick={showScore} > Visa Poäng</button>
@@ -73,12 +65,9 @@ function HighscoreScreen() {
                     <p>{player2Name} fick {player2Score}% rätt</p>
                     <p>{player3Name} fick {player3Score}% rätt</p>
                     <p>{player4Name} fick {player4Score}% rätt</p></div>}
-
-
         </>
     );
 }
-
 
 export default HighscoreScreen;
 

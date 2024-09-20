@@ -19,9 +19,7 @@ function LoginForm({ onLogin }: LoginFormProps) {
         e.preventDefault();
 
         fetch('https://plankton-app-dtvpj.ondigitalocean.app/player/login',{
-
-         // fetch("http://localhost:8080/player/login", {
-        
+         // fetch("http://localhost:8080/player/login",      
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -34,8 +32,7 @@ function LoginForm({ onLogin }: LoginFormProps) {
             })
         })
         .then(res => res.json())  
-        .then((data: Player) => {
-            
+        .then((data: Player) => {      
             if (!data.id) {
                 alert("Failed to login");
                 setUsername("")
@@ -43,15 +40,10 @@ function LoginForm({ onLogin }: LoginFormProps) {
             } else {
                 console.log("Player ID:", data.id);
                 console.log("Username:", data.username);
-                console.log("Score List:", data.scoreList);
-
-                
-                localStorage.setItem("loggedInPlayer", JSON.stringify(data));
-
-                
+                console.log("Score List:", data.scoreList);   
+                localStorage.setItem("loggedInPlayer", JSON.stringify(data));                
                 const storedPlayer = localStorage.getItem("loggedInPlayer");
                 console.log("Stored Player:", storedPlayer);
-
                 onLogin(data.username);  
                 setUsername("");
                 setPassword("");

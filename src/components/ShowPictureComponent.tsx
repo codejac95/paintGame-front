@@ -22,8 +22,6 @@ function ShowPictureComponent({ onPaintTimeout, imageIndex}: ShowPictureComponen
     const [gameStarted, setGameStarted] = useState<boolean>(false);
     const stompClient = useWebSocket();
     const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  
-    
     
     const startLocalCountdown = useCallback(() => {
         setIsRunning(true);
@@ -40,24 +38,18 @@ function ShowPictureComponent({ onPaintTimeout, imageIndex}: ShowPictureComponen
                 } else {
                     clearInterval(countdownIntervalRef.current as NodeJS.Timeout);
                     setIsRunning(false);
-
-                    // Publish countdown end message
                     if (stompClient && stompClient.connected) {
                         stompClient.publish({
                             destination: "/app/showImage",
                             body: JSON.stringify({ action: 'countdownEnded' }),
                         });
                     }
-
-                    // Notify the parent to show the next image
                     onPaintTimeout();
                     return 0;
                 }
             });
         }, 1000);
     }, [stompClient, onPaintTimeout]);
-
-   
 
     const showNextImage = useCallback(() => {
         const selectedImage = images[imageIndex];
@@ -83,10 +75,7 @@ function ShowPictureComponent({ onPaintTimeout, imageIndex}: ShowPictureComponen
           setCurrentImage(images[imageIndex]);
         }
       }, [imageIndex, images, gameStarted]);
-        
-   
-  
-    
+          
       useEffect(() => {
         if (stompClient) {
           const onConnect = () => {
@@ -100,12 +89,9 @@ function ShowPictureComponent({ onPaintTimeout, imageIndex}: ShowPictureComponen
               }
     
               if (action === 'countdownEnded') {
-                // Stop countdown and hide image when countdown ends
                 clearInterval(countdownIntervalRef.current as NodeJS.Timeout);
                 setIsRunning(false);
-                setCurrentImage(null);
-                
-               
+                setCurrentImage(null);                   
               }
             });
     
@@ -126,22 +112,19 @@ function ShowPictureComponent({ onPaintTimeout, imageIndex}: ShowPictureComponen
         };
       }, [stompClient, startLocalCountdown]);
 
-    //testing
     useEffect(() => {
         if (countdown === 0) {
             setPaintVisible(true);
             const timer = setTimeout(() => {
                 setPaintVisible(false);
-            }, 1500); // Display "Paint" for 1.5 seconds
+            }, 1500); 
 
             return () => clearTimeout(timer);
         }
     }, [countdown]);
     
-
     return (
-        <div>
-            
+        <div>        
             {!isRunning && countdown === 10 && !gameStarted && (
                 <button onClick={showNextImage}>Play Game</button>
             )}
