@@ -7,7 +7,6 @@ import CreatePlayerForm from './CreatePlayer/CreatePlayerForm'
 import GameComponent from './components/GameComponent';
 import { useWebSocket } from './components/WebSocketComponent';
 import Highscore from './components/Highscore';
-//import ScoreUpdateForm from './ScoreUpdateForm';
 
 
 function App() {
@@ -17,7 +16,7 @@ function App() {
   const [occupiedSquares, setOccupiedSquares] = useState<number[]>([]);
   const stompClient = useWebSocket();
   const [showHighscores, setShowHighscores] = useState<boolean>(false);
-  const [loggedInPlayer, setLoggedInPlayer] = useState<any>(null); // State to hold logged-in player data
+  const [loggedInPlayer, setLoggedInPlayer] = useState<any>(null);
 
   useEffect(() => {
     const loggedIn = localStorage.getItem('loggedInPlayer');
@@ -52,12 +51,6 @@ function App() {
     };
   }, [stompClient]);
 
-  const playerData = localStorage.getItem("loggedInPlayer");
-  if (playerData) {
-   // const player = JSON.parse(playerData!);
-   // const username = player.username;
-
-  }
 
   function handleLogOut(): void {
     if (assignedSquare !== null && stompClient) {
@@ -80,8 +73,6 @@ function App() {
         body: JSON.stringify(player),
       })
         .then(() => {
-          console.log("loggar ut: ", player);
-
           localStorage.clear();
           setLoginStatus(false);
           setJoinedGame(false);
@@ -136,10 +127,6 @@ function App() {
             </button>
             {showHighscores && <Highscore />}
 
-            {/* Render ScoreUpdateForm when logged in */}
-            {/* {loggedInPlayer && (
-              <ScoreUpdateForm playerId={loggedInPlayer.id} />
-            )} */}
           </div>
         ) : (
           <div className="loggedOutHeader">
@@ -150,13 +137,11 @@ function App() {
         )}
       </div>
       <div>
-        {/* Show GameComponent if the user is logged in and has joined the game */}
         {loginStatus && joinedGame && (
           <GameComponent
             loginStatus={loginStatus}
             assignedSquare={assignedSquare}
             playerName={loggedInPlayer?.username || 'loggedInUser'}
-           // playerId={loggedInPlayer.id}
           />
         )}
       </div>

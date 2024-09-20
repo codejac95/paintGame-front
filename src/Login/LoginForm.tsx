@@ -8,8 +8,8 @@ interface Player {
     id: string;
     username: string;
     password: string;
-    scoreList: []; 
-} 
+    scoreList: [];
+}
 
 function LoginForm({ onLogin }: LoginFormProps) {
     const [username, setUsername] = useState<string>('');
@@ -18,10 +18,9 @@ function LoginForm({ onLogin }: LoginFormProps) {
     function handleSubmit(e: FormEvent<HTMLFormElement>, username: string, password: string): void {
         e.preventDefault();
 
-        fetch('https://plankton-app-dtvpj.ondigitalocean.app/player/login',{
+        fetch('https://plankton-app-dtvpj.ondigitalocean.app/player/login', {
+            // fetch("http://localhost:8080/player/login", {
 
-         // fetch("http://localhost:8080/player/login", {
-        
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -33,49 +32,41 @@ function LoginForm({ onLogin }: LoginFormProps) {
                 "password": password
             })
         })
-        .then(res => res.json())  
-        .then((data: Player) => {
-            
-            if (!data.id) {
-                alert("Failed to login");
-                setUsername("")
-                setPassword("")
-            } else {
-                console.log("Player ID:", data.id);
-                console.log("Username:", data.username);
-                console.log("Score List:", data.scoreList);
+            .then(res => res.json())
+            .then((data: Player) => {
 
-                
-                localStorage.setItem("loggedInPlayer", JSON.stringify(data));
+                if (!data.id) {
+                    alert("Failed to login");
+                    setUsername("")
+                    setPassword("")
+                } else {
 
-                
-                const storedPlayer = localStorage.getItem("loggedInPlayer");
-                console.log("Stored Player:", storedPlayer);
+                    localStorage.setItem("loggedInPlayer", JSON.stringify(data));
 
-                onLogin(data.username);  
-                setUsername("");
-                setPassword("");
-                alert(`Welcome ${data.username}`);
-            }
-        })
-        .catch(err => {
-            console.error("Error during login:", err);
-        });
+                    onLogin(data.username);
+                    setUsername("");
+                    setPassword("");
+                    alert(`Welcome ${data.username}`);
+                }
+            })
+            .catch(err => {
+                console.error("Error during login:", err);
+            });
     }
 
     return (
         <>
             <form className="loginForm" onSubmit={(e) => handleSubmit(e, username, password)}>
-                <input 
-                    type="text" 
-                    value={username} 
-                    onChange={(e) => setUsername(e.target.value)} 
+                <input
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                     placeholder="Username"
                 />
-                <input 
-                    type="password" 
-                    value={password} 
-                    onChange={(e) => setPassword(e.target.value)} 
+                <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     placeholder="Password"
                 />
                 <button type="submit">Logga in</button>
