@@ -3,7 +3,6 @@ import { FormEvent, useState } from "react";
 interface CreatePlayerFormProps {
     onCreatePlayer: (loggedInPlayer: string) => void;
 }
-
 interface Player {
     id: string;
     username: string;
@@ -20,6 +19,7 @@ function CreatePlayerForm({ onCreatePlayer }: CreatePlayerFormProps) {
         fetch("http://localhost:8080/player/create", {
             //fetch('https://plankton-app-dtvpj.ondigitalocean.app/player/create', {
 
+
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -33,9 +33,7 @@ function CreatePlayerForm({ onCreatePlayer }: CreatePlayerFormProps) {
         })
             .then(res => res.json())
             .then((data: Player) => {
-
                 localStorage.setItem("loggedInPlayer", JSON.stringify(data));
-
                 onCreatePlayer(data.username);
                 setUsername("");
                 setPassword("");

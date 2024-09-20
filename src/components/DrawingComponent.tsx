@@ -56,11 +56,11 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
     }))
   );
 
-  // Initialize the squareStates for all squares at the start
   useEffect(() => {
     const initialSquareStates = squares.map((square) => ({
       id: square.id,
       gridId: square.gridId,
+
       color: "#FFFFFF",
     }));
     setSquareStates(initialSquareStates);
@@ -104,9 +104,7 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
 
 
   const handleStartCountdown = useCallback(() => {
-    startLocalCountdown(); // Start the countdown locally 
-
-    // Broadcasting countdown
+    startLocalCountdown(); 
     if (stompClient && stompClient.connected) {
       stompClient.publish({
         destination: "/app/countdownStartedDraw",
@@ -114,7 +112,6 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
       });
     }
   }, [stompClient, startLocalCountdown]);
-
 
   useEffect(() => {
     if (stompClient) {
@@ -216,7 +213,7 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
                 square.width,
                 square.height
               );
-              // Update the state with the new color
+  
               setSquareStates((prev) =>
                 prev.map((s) =>
                   s.id === squareId ? { ...s, color } : s
@@ -307,7 +304,7 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
             body: JSON.stringify({ squareId, color: currentColor }),
           });
         }
-        // Update the square color state
+
         setSquareStates((prev) =>
           prev.map((s) =>
             s.id === squareId ? { ...s, color: currentColor } : s

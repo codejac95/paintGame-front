@@ -8,7 +8,6 @@ import GameComponent from './components/GameComponent';
 import { useWebSocket } from './components/WebSocketComponent';
 import Highscore from './components/Highscore';
 
-
 function App() {
   const [loginStatus, setLoginStatus] = useState<boolean>(false);
   const [joinedGame, setJoinedGame] = useState<boolean>(false);

@@ -6,17 +6,14 @@ function HighscoreScreen() {
     const [player2Name, setPlayer2Name] = useState<string>("");
     const [player3Name, setPlayer3Name] = useState<string>("");
     const [player4Name, setPlayer4Name] = useState<string>("");
-
     const [player1Score, setPlayer1Score] = useState<number>(0);
     const [player2Score, setPlayer2Score] = useState<number>(0);
     const [player3Score, setPlayer3Score] = useState<number>(0);
     const [player4Score, setPlayer4Score] = useState<number>(0);
 
     const [showScoreForRealsBool, setShowScoreForRealsBool] = useState<boolean>(false)
-
-
+    
     async function showScore() {
-
         // const response = await fetch('https://plankton-app-dtvpj.ondigitalocean.app/player/getAll', {
         const response = await fetch("http://localhost:8080/player/getAll", {
             method: "GET",
@@ -38,7 +35,6 @@ function HighscoreScreen() {
         setPlayer4Score(data[3].scoreList[data[3].scoreList.length - 1])
 
         showScoreForReals()
-
     }
 
     function showScoreForReals() {
@@ -49,23 +45,17 @@ function HighscoreScreen() {
         }
     }
 
-
-
-
     return (
         <>
             <button onClick={showScore} > Visa Poäng</button>
-
             {showScoreForRealsBool === true &&
                 <div> <p>{player1Name} fick {player1Score}% rätt</p>
                     <p>{player2Name} fick {player2Score}% rätt</p>
                     <p>{player3Name} fick {player3Score}% rätt</p>
                     <p>{player4Name} fick {player4Score}% rätt</p></div>}
-
         </>
     );
 }
-
 
 export default HighscoreScreen;
 

@@ -20,8 +20,6 @@ function ShowPictureComponent({ onPaintTimeout, imageIndex }: ShowPictureCompone
   const stompClient = useWebSocket();
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-
-
   const startLocalCountdown = useCallback(() => {
     setIsRunning(true);
     setCountdown(10);
@@ -42,18 +40,16 @@ function ShowPictureComponent({ onPaintTimeout, imageIndex }: ShowPictureCompone
             stompClient.publish({
               destination: "/app/showImage",
               body: JSON.stringify({ action: 'countdownEnded' }),
+
             });
           }
 
-          // Prop to notify the parent to show the next image
           onPaintTimeout();
           return 0;
         }
       });
     }, 1000);
   }, [stompClient, onPaintTimeout]);
-
-
 
   const showNextImage = useCallback(() => {
     const selectedImage = images[imageIndex];
@@ -80,9 +76,6 @@ function ShowPictureComponent({ onPaintTimeout, imageIndex }: ShowPictureCompone
     }
   }, [imageIndex, images, gameStarted]);
 
-
-
-
   useEffect(() => {
     if (stompClient) {
       const onConnect = () => {
@@ -99,7 +92,6 @@ function ShowPictureComponent({ onPaintTimeout, imageIndex }: ShowPictureCompone
             clearInterval(countdownIntervalRef.current as NodeJS.Timeout);
             setIsRunning(false);
             setCurrentImage(null);
-
           }
         });
 
@@ -130,7 +122,6 @@ function ShowPictureComponent({ onPaintTimeout, imageIndex }: ShowPictureCompone
     }
   }, [countdown]);
 
-
   return (
     <div>
       {!isRunning && countdown === 10 && !gameStarted && (
@@ -140,6 +131,7 @@ function ShowPictureComponent({ onPaintTimeout, imageIndex }: ShowPictureCompone
         <div>
           <img src={currentImage} alt="Current" />
           {isRunning && countdown > 0 && <p>Countdown: {countdown}</p>}
+
         </div>
       ) : (
         paintVisible && <h1>Paint</h1>

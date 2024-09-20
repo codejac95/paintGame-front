@@ -12,7 +12,6 @@ interface Player {
     loggedIn: boolean;
 }
 
-
 interface GameCompProp {
 
     loginStatus: boolean;
