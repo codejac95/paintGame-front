@@ -17,8 +17,8 @@ function HighscoreScreen() {
 
     async function showScore() {
 
-        const response = await fetch('https://plankton-app-dtvpj.ondigitalocean.app/player/getAll', {
-            //const response = await fetch("http://localhost:8080/player/getAll", {
+        // const response = await fetch('https://plankton-app-dtvpj.ondigitalocean.app/player/getAll', {
+        const response = await fetch("http://localhost:8080/player/getAll", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
