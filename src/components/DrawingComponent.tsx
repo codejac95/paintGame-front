@@ -8,7 +8,7 @@ interface DrawingComponentProps {
   assignedSquare: number | null;
   playerName: string | null;
 
-  // Viktig jävel för andra uppgifter
+  // Importatnt for other projects. This is how you receive a function from other components
   onComponentChange: (component: "image" | "drawing" | "showHighscoreScreen") => void;
 
 }
@@ -29,7 +29,7 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
   const [isRunning, setIsRunning] = useState<boolean>(false);
 
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  const [showField, setShowField] = useState <string> ("drawing");
+  const [showField, setShowField] = useState<string>("drawing");
 
 
   const stompClient = useWebSocket();
@@ -60,17 +60,15 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
     const initialSquareStates = squares.map((square) => ({
       id: square.id,
       gridId: square.gridId,
-      color: "#FFFFFF", 
+
+      color: "#FFFFFF",
     }));
     setSquareStates(initialSquareStates);
   }, []);
 
-
-  //------------------------------------------------
   const startLocalCountdown = useCallback(() => {
     setIsRunning(true);
     setCountdown(60);
-
 
     if (countdownIntervalRef.current) {
       clearInterval(countdownIntervalRef.current);
@@ -93,8 +91,6 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
             });
           }
 
-          // onDrawingComplete();
-
           setTimeout(() => {
             setCountdown(10);
           }, 1500);
@@ -109,7 +105,6 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
 
   const handleStartCountdown = useCallback(() => {
     startLocalCountdown(); 
-
     if (stompClient && stompClient.connected) {
       stompClient.publish({
         destination: "/app/countdownStartedDraw",
@@ -117,7 +112,6 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
       });
     }
   }, [stompClient, startLocalCountdown]);
-
 
   useEffect(() => {
     if (stompClient) {
@@ -127,7 +121,6 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
           "/topic/drawingCountdown",
           (message) => {
             const { action } = JSON.parse(message.body);
-            console.log("Received action:", action);
 
             if (action === "startCountdownDraw") {
               startLocalCountdown();
@@ -163,9 +156,6 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
     handleStartCountdown();
   }, [handleStartCountdown]);
 
-
-
-  //------------------------------------------------
 
   const getSquareId = (x: number, y: number): number | null => {
     const square = squares.find(
@@ -287,7 +277,6 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
   const fillSquare = (event: React.MouseEvent<HTMLCanvasElement>) => {
     const { offsetX, offsetY } = event.nativeEvent;
     const squareId = getSquareId(offsetX, offsetY);
-    console.log("Lägger till Square ID: ", squareId, "color: ", currentColor);
 
     const square = squares.find((sq) => sq.id === squareId);
 
@@ -329,7 +318,6 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
     event.preventDefault();
     const { offsetX, offsetY } = event.nativeEvent;
     const squareId = getSquareId(offsetX, offsetY);
-    console.log("Tar bort Square ID: ", squareId, "color: ", currentColor);
     const square = squares.find((sq) => sq.id === squareId);
 
     if (square && square.gridId === assignedSquare) {
@@ -371,8 +359,6 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
 
   useEffect(() => {
     let subscription: StompSubscription | undefined;
-    console.log(subscription + ": subscription' is declared but its value is never read. *ERROR*");
-
 
     const onConnect = () => {
       subscription = stompClient!.subscribe("/topic/percent", (message) => {
@@ -418,7 +404,6 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
     const percent = (matchCount / minLength) * 100;
     console.log(`Percentage match: ${percent}%`);
 
-
     if (stompClient) {
       stompClient.publish({
         destination: "/app/percentMatch",
@@ -426,7 +411,6 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
           playerName,
           percent: percent,
         }),
-
 
       });
       console.log("percent: ", percent);
@@ -441,21 +425,14 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
         destination: '/app/resetSquares'
       }
       );
-    } else {
-      console.log("else");
-
     }
 
     onComponentChange("image")
 
-    console.log("testing");
   }
 
   return (
     <div>
-      {/* <button onClick={handleStartCountdown} disabled={isRunning}>
-                {isRunning ? `Time Remaining: ${countdown}s` : "Start Countdown"}
-            </button> */}
       {isRunning && (
         <div>
           <h2>Time Remaining: {countdown}s</h2>
@@ -473,7 +450,7 @@ function DrawingComponent({ onComponentChange, assignedSquare, playerName }: Dra
       {showField === "scoreScreen" && <div>
         {< HighscoreScreen />}
         <button onClick={clearSquaresWhenFinishedGame}> Reset Game </button>
-        </div>}
+      </div>}
       <canvas onClick={fillSquare} onContextMenu={clearSquare} ref={canvasRef} />
     </div>
   );

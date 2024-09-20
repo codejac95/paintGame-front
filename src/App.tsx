@@ -7,7 +7,6 @@ import CreatePlayerForm from './CreatePlayer/CreatePlayerForm'
 import GameComponent from './components/GameComponent';
 import { useWebSocket } from './components/WebSocketComponent';
 import Highscore from './components/Highscore';
-//import ScoreUpdateForm from './ScoreUpdateForm';
 
 function App() {
   const [loginStatus, setLoginStatus] = useState<boolean>(false);
@@ -16,7 +15,7 @@ function App() {
   const [occupiedSquares, setOccupiedSquares] = useState<number[]>([]);
   const stompClient = useWebSocket();
   const [showHighscores, setShowHighscores] = useState<boolean>(false);
-  const [loggedInPlayer, setLoggedInPlayer] = useState<any>(null); // State to hold logged-in player data
+  const [loggedInPlayer, setLoggedInPlayer] = useState<any>(null);
 
   useEffect(() => {
     const loggedIn = localStorage.getItem('loggedInPlayer');
@@ -51,12 +50,6 @@ function App() {
     };
   }, [stompClient]);
 
-  const playerData = localStorage.getItem("loggedInPlayer");
-  if (playerData) {
-   // const player = JSON.parse(playerData!);
-   // const username = player.username;
-
-  }
 
   function handleLogOut(): void {
     if (assignedSquare !== null && stompClient) {
@@ -70,8 +63,8 @@ function App() {
     if (playerData) {
       const player = JSON.parse(playerData);
 
-      fetch('https://plankton-app-dtvpj.ondigitalocean.app/player/logout', {
-        // fetch("http://localhost:8080/player/logout", {
+      //  fetch('https://plankton-app-dtvpj.ondigitalocean.app/player/logout', {
+      fetch("http://localhost:8080/player/logout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -79,8 +72,6 @@ function App() {
         body: JSON.stringify(player),
       })
         .then(() => {
-          console.log("loggar ut: ", player);
-
           localStorage.clear();
           setLoginStatus(false);
           setJoinedGame(false);
@@ -135,9 +126,6 @@ function App() {
             </button>
             {showHighscores && <Highscore />}
 
-            {/* {loggedInPlayer && (
-              <ScoreUpdateForm playerId={loggedInPlayer.id} />
-            )} */}
           </div>
         ) : (
           <div className="loggedOutHeader">
@@ -153,7 +141,6 @@ function App() {
             loginStatus={loginStatus}
             assignedSquare={assignedSquare}
             playerName={loggedInPlayer?.username || 'loggedInUser'}
-           // playerId={loggedInPlayer.id}
           />
         )}
       </div>

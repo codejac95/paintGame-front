@@ -13,18 +13,15 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
 
     useEffect(() => {
         console.log(isConnected);
-        const socket = new SockJS("https://plankton-app-dtvpj.ondigitalocean.app/websocket");
-         // const socket = new SockJS('http://localhost:8080/websocket');
-
+        // const socket = new SockJS("https://plankton-app-dtvpj.ondigitalocean.app/websocket");
+        const socket = new SockJS('http://localhost:8080/websocket');
         const client = new Client({
 
             webSocketFactory: () => socket,
             onConnect: () => {
-                console.log('Connected to WebSocket');
                 setIsConnected(true);
             },
             onDisconnect: () => {
-                console.log('Disconnected from WebSocket');
                 setIsConnected(false);
             },
             onStompError: (error) => {

@@ -1,4 +1,4 @@
-import {  useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ShowPictureComponent from "./ShowPictureComponent";
 import DrawingComponent from "./DrawingComponent";
 import { useWebSocket } from "./WebSocketComponent";
@@ -13,24 +13,21 @@ interface Player {
 }
 
 interface GameCompProp {
-    
+
     loginStatus: boolean;
     assignedSquare: number | null;
     playerName: string;
 }
 
-function GameComponent({ loginStatus, assignedSquare,  }: GameCompProp) {
+function GameComponent({ loginStatus, assignedSquare, }: GameCompProp) {
     const [activeComponent, setActiveComponent] = useState<'drawing' | 'image' | "showHighscoreScreen">('image');
     const [imageIndex, setImageIndex] = useState<number>(0);
     const stompClient = useWebSocket();
 
-        // Viktig jävel för andra uppgifter
-        const handleComponentChange = (component: "image" | "drawing" | "showHighscoreScreen") => {
-
-            setActiveComponent(component)
-        }
-
-
+    // Importatnt for other projects. This is how you send a function to other components as a prop.
+    const handleComponentChange = (component: "image" | "drawing" | "showHighscoreScreen") => {
+        setActiveComponent(component)
+    }
 
     useEffect(() => {
         if (stompClient) {
@@ -41,14 +38,12 @@ function GameComponent({ loginStatus, assignedSquare,  }: GameCompProp) {
                     if (action === "showImage") {
                         setActiveComponent('image');
 
-
                     }
                 });
                 const countdownSubscription = stompClient.subscribe("/topic/drawingCountdown", (message) => {
                     const { action } = JSON.parse(message.body);
                     if (action === "countdownEndedDraw") {
                         saveScore()
-// setActiveComponent('showHighscoreScreen');
                     }
                 });
 
@@ -80,25 +75,23 @@ function GameComponent({ loginStatus, assignedSquare,  }: GameCompProp) {
             try {
                 let retrievedPlayer = JSON.parse(player) as Player;
                 console.log(retrievedPlayer.id);
-    
-               const response = await fetch('https://plankton-app-dtvpj.ondigitalocean.app/player/update/' + retrievedPlayer.id, {
-                //const response = await fetch("http://localhost:8080/player/update/" + retrievedPlayer.id, {
+
+                //const response = await fetch('https://plankton-app-dtvpj.ondigitalocean.app/player/update/' + retrievedPlayer.id, {
+                const response = await fetch("http://localhost:8080/player/update/" + retrievedPlayer.id, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ "newScore": localStorage.getItem("myScore")
-                        
-                     }),
+                    body: JSON.stringify({
+                        "newScore": localStorage.getItem("myScore")
+
+                    }),
                 });
-    
+
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
-                }            
-                    const data = await response.json();
-                    console.log("Du skickade poängen : " + data.scoreList);
-                    console.log("Och användaren : " + data.username);
-                
+                }
+
             } catch (error) {
                 console.error("Error updating score:", error);
             }
